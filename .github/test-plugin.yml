@@ -1,0 +1,14 @@
+name: 'Test Plugin'
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  pluginTest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ./gradlew test
