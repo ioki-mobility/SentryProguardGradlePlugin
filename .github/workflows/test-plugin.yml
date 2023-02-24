@@ -11,4 +11,8 @@ jobs:
   pluginTest:
     runs-on: ubuntu-latest
     steps:
-      - name: ./gradlew test
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run tests
+        run: ./gradlew test
