@@ -1,0 +1,40 @@
+plugins {
+    id "com.android.application" version "7.4.0"
+    id "com.ioki.sentry.proguard"
+}
+
+android {
+    namespace 'com.ioki.sentry.proguard.plugin.test.project'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.ioki.sentry.proguard.plugin.test.project"
+
+        minSdk 29
+        targetSdk 33
+
+        versionName '0000-00-00.0'
+        versionCode 1
+    }
+
+    buildTypes {
+        debug { }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
+
+    flavorDimensions = ["partner"]
+    def partners = ["a", "b", "c"]
+    partners.forEach {partnerName ->
+        productFlavors.register(partnerName) {
+            dimension "partner"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
