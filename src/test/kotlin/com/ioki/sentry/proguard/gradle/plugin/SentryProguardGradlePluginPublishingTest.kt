@@ -100,7 +100,7 @@ class SentryProguardGradlePluginPublishingTest {
                     it.eachPlugin {
                         if (requested.id.id == "com.ioki.sentry.proguard") {
                             useModule(
-                                   "com.github.ioki-mobility.SentryProguardGradlePlugin:${'$'}{requested.id.id}.gradle.plugin:${'$'}{it.requested.version}"
+                                   "com.github.ioki-mobility.SentryProguardGradlePlugin:${'$'}{requested.id.id}.gradle.plugin:${'$'}{requested.version}"
                             )
                         }
                     }
