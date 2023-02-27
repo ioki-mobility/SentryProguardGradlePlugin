@@ -34,8 +34,8 @@ version = "1.0.0"
 group = "com.ioki"
 publishing {
     publications {
-        register("release", MavenPublication::class.java) {
-            from(components["java"])
+        register("pluginMaven", MavenPublication::class.java) {
+            artifactId = "sentry-proguard"
             pom {
                 url.set("https://github.com/ioki-mobility/SentryProguardGradlePlugin")
                 licenses {
