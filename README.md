@@ -7,11 +7,31 @@ and uploads the `UUID` together with the generated `mapping` file to Sentry.
 
 ### Apply the plugin
 
+Add [JitPack](https://jitpack.io/) to the `settings.gradle[.kts]` file:
 ```groovy
-plugins {
-    id "com.ioki.sentry.proguard"
+pluginManagement {
+    repositories {
+        maven { url("https://jitpack.io") }
+        resolutionStrategy {
+            it.eachPlugin {
+                if (requested.id.id == "com.ioki.sentry.proguard") {
+                    useModule(
+                        "com.github.ioki-mobility.SentryProguardGradlePlugin:${requested.id.id}.gradle.plugin:${requested.version}"
+                    )
+                }
+            }
+        }
+    }
 }
 ```
+
+Add the plugin to the **Android application** `build.gradle[.kts]` file:
+```groovy
+plugins {
+    id "com.ioki.sentry.proguard" version "[CURRENT_VERSION]"
+}
+```
+> **Note**: The version could be either a (git) tag (recommended), branch name or hash 
 
 ### Add a AndroidManifest placeholder
 
