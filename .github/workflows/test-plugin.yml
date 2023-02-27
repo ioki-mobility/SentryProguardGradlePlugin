@@ -33,7 +33,7 @@ jobs:
   publishingConsumingPluginTest:
     runs-on: ubuntu-latest
     env:
-      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
           key: gradle-caches-v0-${{ hashFiles('build.gradle.kts', 'settings.gradle', 'gradle/wrapper/gradle-wrapper.properties') }}
 
       - name: Publish Plugin to mavenLocal
-        run: IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION=$BRANCH_NAME ./gradlew publishToMavenLocal
+        run: ./gradlew publishToMavenLocal
 
       - name: Run publishing/consuming tests
         run: ./gradlew test --tests 'SentryProguardGradlePluginPublishingTest'
