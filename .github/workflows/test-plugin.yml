@@ -1,18 +1,31 @@
 name: 'Test Plugin'
 
 on:
-  workflow_dispatch:
   pull_request:
   push:
     branches:
       - main
 
 jobs:
-  pluginTest:
+  localPluginTest:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Run tests
-        run: ./gradlew test
+      - name: Run 'normal' tests
+        run: ./gradlew test --tests 'SentryProguardGradlePluginTest'
+
+  publishingConsumingPluginTest:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Publish Plugin to mavenLocal
+        run: IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION=$BRANCH_NAME ./gradlew publishToMavenLocal
+
+      - name: Run publishing/consuming tests
+        run: ./gradlew test --tests 'SentryProguardGradlePluginPublishingTest'

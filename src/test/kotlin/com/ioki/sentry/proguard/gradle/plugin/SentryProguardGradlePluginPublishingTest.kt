@@ -9,13 +9,11 @@ import org.junit.jupiter.api.io.TempDir
 import strikt.api.expectThat
 import strikt.assertions.containsSequence
 import strikt.assertions.isEqualTo
-import strikt.assertions.isNotNull
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.copyToRecursively
+import kotlin.io.path.*
 
-class SentryProguardGradlePluginTest {
+class SentryProguardGradlePluginPublishingTest {
 
     @TempDir
     lateinit var testTmpPath: Path
@@ -32,10 +30,22 @@ class SentryProguardGradlePluginTest {
     }
 
     @Test
-    fun `running assembleRelease should run tasks in correct sequence`() {
+    fun `consuming of plugin marker publication works`() {
+        val buildFile = testTmpPath.resolve("build.gradle")
+        val newBuildFile = buildFile.readText().replace(
+            oldValue = """id "com.ioki.sentry.proguard"""",
+            newValue = """id "com.ioki.sentry.proguard" version "1.0.0""""
+        )
+        buildFile.writeText(newBuildFile)
+        val settingsFile = testTmpPath.resolve("settings.gradle")
+        val newSettingsFile = settingsFile.readText().replace(
+            oldValue = "mavenCentral()",
+            newValue = "mavenCentral() \n mavenLocal()"
+        )
+        settingsFile.writeText(newSettingsFile)
+
         val result: BuildResult = GradleRunner.create()
             .withProjectDir(testTmpPath.toFile())
-            .withPluginClasspath()
             .withArguments(
                 listOf(
                     "assembleRelease",
@@ -66,10 +76,40 @@ class SentryProguardGradlePluginTest {
     }
 
     @Test
-    fun `running assembleRelease should fail with expected upload`() {
+    fun `consuming of plugin publication via jitpack works`() {
+        val buildFile = testTmpPath.resolve("build.gradle")
+        val testVersion = System.getenv("IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION")
+            ?: throw IllegalStateException(
+                "Please provide plugin version from jitpack" +
+                        " via environment variable 'IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION'"
+            )
+        val newBuildFile = buildFile.readText().replace(
+            oldValue = """id "com.ioki.sentry.proguard"""",
+            newValue = """id "com.ioki.sentry.proguard" version "$testVersion""""
+        )
+        buildFile.writeText(newBuildFile)
+        val settingsFile = testTmpPath.resolve("settings.gradle")
+        val newSettingsFile = settingsFile.readText().replace(
+            oldValue = """gradlePluginPortal()""",
+            newValue =
+            """
+                gradlePluginPortal() 
+                maven { url("https://jitpack.io") }
+                resolutionStrategy {
+                    it.eachPlugin {
+                        if (requested.id.id == "com.ioki.sentry.proguard") {
+                            useModule(
+                                   "com.github.ioki-mobility.SentryProguardGradlePlugin:${'$'}{requested.id.id}.gradle.plugin:${'$'}{it.requested.version}"
+                            )
+                        }
+                    }
+                }
+            """
+        )
+        settingsFile.writeText(newSettingsFile)
+
         val result: BuildResult = GradleRunner.create()
             .withProjectDir(testTmpPath.toFile())
-            .withPluginClasspath()
             .withArguments(
                 listOf(
                     "assembleRelease",
@@ -84,28 +124,6 @@ class SentryProguardGradlePluginTest {
             .isEqualTo(TaskOutcome.SUCCESS)
         expectThat(result.task(":uploadSentryProguardUuidForARelease")!!.outcome)
             .isEqualTo(TaskOutcome.FAILED)
-    }
-
-    @Test
-    fun `downloadSentryCli task should be up-to-date when run multiple times`() {
-        val firstTime: BuildResult = GradleRunner.create()
-            .withProjectDir(testTmpPath.toFile())
-            .withPluginClasspath()
-            .withArguments(listOf("downloadSentryCli"))
-            .build()
-        expectThat(firstTime.task(":downloadSentryCli")).isNotNull()
-            .get { outcome }
-            .isEqualTo(TaskOutcome.SUCCESS)
-
-        val secondTime: BuildResult = GradleRunner.create()
-            .withProjectDir(testTmpPath.toFile())
-            .withPluginClasspath()
-            .withArguments(listOf("downloadSentryCli"))
-            .build()
-
-        expectThat(secondTime.task(":downloadSentryCli")).isNotNull()
-            .get { outcome }
-            .isEqualTo(TaskOutcome.UP_TO_DATE)
     }
 
 }
