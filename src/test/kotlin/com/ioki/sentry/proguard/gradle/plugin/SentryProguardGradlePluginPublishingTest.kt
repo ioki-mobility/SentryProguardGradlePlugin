@@ -5,6 +5,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import org.junit.jupiter.api.io.TempDir
 import strikt.api.expectThat
 import strikt.assertions.containsSequence
@@ -79,7 +80,7 @@ class SentryProguardGradlePluginPublishingTest {
     fun `consuming of plugin publication via jitpack works`() {
         val buildFile = testTmpPath.resolve("build.gradle")
         val testVersion = System.getenv("IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION")
-            ?: throw IllegalStateException(
+            ?: fail(
                 "Please provide plugin version from jitpack" +
                         " via environment variable 'IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION'"
             )
