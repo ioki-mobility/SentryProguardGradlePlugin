@@ -7,9 +7,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import strikt.api.expectThat
-import strikt.assertions.containsSequence
-import strikt.assertions.isEqualTo
-import strikt.assertions.isNotNull
+import strikt.assertions.*
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.ExperimentalPathApi
@@ -63,6 +61,70 @@ class SentryProguardGradlePluginTest {
             uploadForBReleaseTask,
             uploadForCReleaseTask
         )
+    }
+
+    @Test
+    fun `running assembleProduction should run tasks in correct sequence`() {
+        val result: BuildResult = GradleRunner.create()
+            .withProjectDir(testTmpPath.toFile())
+            .withPluginClasspath()
+            .withArguments(
+                listOf(
+                    "assembleProduction",
+                    "-PIOKI_SENTRY_ORG=a",
+                    "-PIOKI_SENTRY_PROJECT=b",
+                    "-PIOKI_SENTRY_AUTH_TOKEN=c",
+                    "-PIOKI_SENTRY_NO_UPLOAD=true"
+                )
+            )
+            .build()
+
+        val downloadCliTask = result.task(":downloadSentryCli")
+        val uploadForAProductionTask = result.task(":uploadSentryProguardUuidForAProduction")
+        val uploadForBProductionTask = result.task(":uploadSentryProguardUuidForBProduction")
+        val uploadForCProductionTask = result.task(":uploadSentryProguardUuidForCProduction")
+        val filteredTasks = result.tasks.filter {
+            it == downloadCliTask
+                    || it == uploadForAProductionTask
+                    || it == uploadForBProductionTask
+                    || it == uploadForCProductionTask
+        }
+        expectThat(filteredTasks).containsSequence(
+            downloadCliTask,
+            uploadForAProductionTask,
+            uploadForBProductionTask,
+            uploadForCProductionTask
+        )
+    }
+
+    @Test
+    fun `running assembleADebug should not run any sentry related task`() {
+        val result: BuildResult = GradleRunner.create()
+            .withProjectDir(testTmpPath.toFile())
+            .withPluginClasspath()
+            .withArguments(listOf("assembleADebug"))
+            .build()
+
+        val downloadCliTask = result.task(":downloadSentryCli")
+        val filteredTasks = result.tasks.filter {
+            it == downloadCliTask || it.path.contains("uploadSentryProguardUuidFor")
+        }
+        expectThat(filteredTasks).isEmpty()
+    }
+
+    @Test
+    fun `running assembleBStaging should not run any sentry related task`() {
+        val result: BuildResult = GradleRunner.create()
+            .withProjectDir(testTmpPath.toFile())
+            .withPluginClasspath()
+            .withArguments(listOf("assembleBStaging"))
+            .build()
+
+        val downloadCliTask = result.task(":downloadSentryCli")
+        val filteredTasks = result.tasks.filter {
+            it == downloadCliTask || it.path.contains("uploadSentryProguardUuidFor")
+        }
+        expectThat(filteredTasks).isEmpty()
     }
 
     @Test
