@@ -13,12 +13,14 @@ private const val SENTRY_CLI_FILE_PATH = "sentry/cli"
 class SentryProguardGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.getByType(AndroidComponentsExtension::class.java)
-        project.replaceSentryProguardUuidInAndroidManifest(extension)
+        val sentryProguardExtension = project.extensions.createSentryProguardExtension()
+        project.replaceSentryProguardUuidInAndroidManifest(extension, sentryProguardExtension)
     }
 }
 
 private fun Project.replaceSentryProguardUuidInAndroidManifest(
     extension: AndroidComponentsExtension<*, *, *>,
+    sentryProguardExtension: SentryProguardExtension,
 ) {
     val downloadSentryCliTask = tasks.registerDownloadSentryCliTask(
         objects.fileProperty().fileValue(buildDir.resolve(SENTRY_CLI_FILE_PATH))
@@ -34,7 +36,8 @@ private fun Project.replaceSentryProguardUuidInAndroidManifest(
             tasks.registerUploadUuidToSentryTask(
                 variantName = variant.name,
                 uuid = uuid,
-                downloadSentryCliTask = downloadSentryCliTask
+                downloadSentryCliTask = downloadSentryCliTask,
+                sentryProguardExtension = sentryProguardExtension,
             )
         } else {
             variant.manifestPlaceholders.put("sentryProguardUuid", "")

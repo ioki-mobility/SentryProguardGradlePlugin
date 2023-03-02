@@ -1,20 +1,26 @@
 package com.ioki.sentry.proguard.gradle.plugin.tasks
 
+import com.ioki.sentry.proguard.gradle.plugin.SentryProguardExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 
 internal fun TaskContainer.registerUploadUuidToSentryTask(
     variantName: String,
     uuid: String,
-    downloadSentryCliTask: TaskProvider<DownloadSentryCliTask>
+    downloadSentryCliTask: TaskProvider<DownloadSentryCliTask>,
+    sentryProguardExtension: SentryProguardExtension
 ): TaskProvider<UploadUuidToSentryTask> {
     val uploadUuidTask = register(
         "uploadSentryProguardUuidFor${variantName.replaceFirstChar { it.titlecase() }}",
         UploadUuidToSentryTask::class.java
     ) {
+        it.sentryOrg.set(sentryProguardExtension.organization)
+        it.sentryProject.set(sentryProguardExtension.project)
+        it.sentryAuthToken.set(sentryProguardExtension.authToken)
         it.cliFilePath.set(downloadSentryCliTask.flatMap { it.cliFilePath })
         it.uuid = uuid
         it.variantName = variantName
@@ -37,14 +43,14 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @Input
     lateinit var uuid: String
 
-    @Input
-    val sentryOrg = project.property("IOKI_SENTRY_ORG") as String
+    @get:Input
+    abstract val sentryOrg: Property<String>
 
-    @Input
-    val sentryProject = project.property("IOKI_SENTRY_PROJECT") as String
+    @get:Input
+    abstract val sentryProject: Property<String>
 
-    @Input
-    val sentryAuthToken = project.property("IOKI_SENTRY_AUTH_TOKEN") as String
+    @get:Input
+    abstract val sentryAuthToken: Property<String>
 
     @Input
     val noUpload = (project.findProperty("IOKI_SENTRY_NO_UPLOAD") as? String).toBoolean()

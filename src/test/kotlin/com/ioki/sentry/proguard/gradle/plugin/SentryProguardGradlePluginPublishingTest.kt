@@ -50,9 +50,6 @@ class SentryProguardGradlePluginPublishingTest {
             .withArguments(
                 listOf(
                     "assembleRelease",
-                    "-PIOKI_SENTRY_ORG=a",
-                    "-PIOKI_SENTRY_PROJECT=b",
-                    "-PIOKI_SENTRY_AUTH_TOKEN=c",
                     "-PIOKI_SENTRY_NO_UPLOAD=true"
                 )
             )
@@ -111,14 +108,7 @@ class SentryProguardGradlePluginPublishingTest {
 
         val result: BuildResult = GradleRunner.create()
             .withProjectDir(testTmpPath.toFile())
-            .withArguments(
-                listOf(
-                    "assembleRelease",
-                    "-PIOKI_SENTRY_ORG=a",
-                    "-PIOKI_SENTRY_PROJECT=b",
-                    "-PIOKI_SENTRY_AUTH_TOKEN=c",
-                )
-            )
+            .withArguments(listOf("assembleRelease"))
             .buildAndFail()
 
         expectThat(result.task(":downloadSentryCli")!!.outcome)
