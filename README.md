@@ -25,10 +25,16 @@ pluginManagement {
 }
 ```
 
-Add the plugin to the **Android application** `build.gradle[.kts]` file:
+Add the plugin to the **Android application** `build.gradle[.kts]` file and configure it:
 ```groovy
 plugins {
     id "com.ioki.sentry.proguard" version "[CURRENT_VERSION]"
+}
+
+sentryProguard {
+    organization.set("SENTRY_ORG")
+    project.set("SENTRY_PROJECT")
+    authToken.set("SENTRY_AUTH_TOKEN")
 }
 ```
 > **Note**: The version could be either a (git) tag (recommended), branch name or hash 
@@ -40,14 +46,6 @@ plugins {
     android:name="io.sentry.proguard-uuid"
     android:value="${sentryProguardUuid}"
 />
-```
-
-### Add Gradle properties
-
-```
-IOKI_SENTRY_ORG=[SENTRY_ORG]
-IOKI_SENTRY_PROJECT=[SENTRY_PROJECT]
-IOKI_SENTRY_AUTH_TOKEN=[SENTRY_ORG_AUTH_TOKEN]
 ```
 
 ## How it works under the hood
