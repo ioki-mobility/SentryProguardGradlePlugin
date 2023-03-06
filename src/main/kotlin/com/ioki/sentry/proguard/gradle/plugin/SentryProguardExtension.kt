@@ -12,4 +12,6 @@ internal interface SentryProguardExtension {
     val project: Property<String>
 
     val authToken: Property<String>
+
+    val noUpload: Property<Boolean>
 }

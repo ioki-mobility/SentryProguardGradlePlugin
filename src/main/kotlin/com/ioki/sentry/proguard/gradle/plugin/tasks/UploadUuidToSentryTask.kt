@@ -21,6 +21,7 @@ internal fun TaskContainer.registerUploadUuidToSentryTask(
         it.sentryOrg.set(sentryProguardExtension.organization)
         it.sentryProject.set(sentryProguardExtension.project)
         it.sentryAuthToken.set(sentryProguardExtension.authToken)
+        it.noUpload.set(sentryProguardExtension.noUpload)
         it.cliFilePath.set(downloadSentryCliTask.flatMap { it.cliFilePath })
         it.uuid = uuid
         it.variantName = variantName
@@ -52,8 +53,9 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @get:Input
     abstract val sentryAuthToken: Property<String>
 
-    @Input
-    val noUpload = (project.findProperty("IOKI_SENTRY_NO_UPLOAD") as? String).toBoolean()
+    @get:Optional
+    @get:Input
+    abstract val noUpload: Property<Boolean>
 
     @InputFile
     val cliFilePath: RegularFileProperty = project.objects.fileProperty()
@@ -73,14 +75,15 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
             sentryProject,
             sentryAuthToken
         )
-        if (!noUpload) {
+        val noUpload = noUpload.getOrElse(false)
+        if (noUpload) {
+            logger.log(LogLevel.INFO, "No upload cause extension.noUpload were set.")
+        } else {
             val process = Runtime.getRuntime().exec(command)
             val stdIn = process.inputStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
             val stdErr = process.errorStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
             if (stdErr.isNotBlank()) throw GradleException("$stdIn \n $stdErr")
             else println(stdIn)
-        } else {
-            logger.log(LogLevel.INFO, "No upload cause property `IOKI_SENTRY_NO_UPLOAD` were set.")
         }
     }
 }
