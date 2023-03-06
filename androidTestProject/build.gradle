@@ -36,7 +36,7 @@ android {
 
     flavorDimensions = ["partner"]
     def partners = ["a", "b", "c"]
-    partners.forEach {partnerName ->
+    partners.forEach { partnerName ->
         productFlavors.register(partnerName) {
             dimension "partner"
         }
@@ -48,8 +48,10 @@ android {
     }
 }
 
+def noUploadToSentry = hasProperty("IOKI_SENTRY_NO_UPLOAD") ? property("IOKI_SENTRY_NO_UPLOAD").toBoolean() : null
 sentryProguard {
     organization.set("a")
     project.set("b")
     authToken.set("c")
+    noUpload.set(noUploadToSentry)
 }

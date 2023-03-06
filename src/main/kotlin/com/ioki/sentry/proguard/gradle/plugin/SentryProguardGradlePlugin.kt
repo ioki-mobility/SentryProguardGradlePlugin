@@ -27,7 +27,7 @@ private fun Project.replaceSentryProguardUuidInAndroidManifest(
     )
 
     extension.onVariants { variant ->
-        val minifyEnabled = (variant as ApplicationVariant)?.isMinifyEnabled == true
+        val minifyEnabled = (variant as? ApplicationVariant)?.isMinifyEnabled == true
         if (minifyEnabled) {
             val uuid = UUID.randomUUID().toString()
 
