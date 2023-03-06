@@ -11,12 +11,17 @@ Add [JitPack](https://jitpack.io/) to the `settings.gradle[.kts]` file:
 ```groovy
 pluginManagement {
     repositories {
-        maven { url("https://jitpack.io") }
+        maven { 
+            url("https://jitpack.io")
+            content {
+                includeGroup("com.github.ioki-mobility.SentryProguardGradlePlugin")
+            }
+        }
         resolutionStrategy {
             it.eachPlugin {
                 if (requested.id.id == "com.ioki.sentry.proguard") {
                     useModule(
-                        "com.github.ioki-mobility.SentryProguardGradlePlugin:${requested.id.id}.gradle.plugin:${requested.version}"
+                        "com.github.ioki-mobility.SentryProguardGradlePlugin:sentry-proguard:${requested.version}"
                     )
                 }
             }
