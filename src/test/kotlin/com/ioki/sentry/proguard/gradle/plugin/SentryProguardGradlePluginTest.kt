@@ -157,4 +157,44 @@ class SentryProguardGradlePluginTest {
             .isEqualTo(TaskOutcome.UP_TO_DATE)
     }
 
+    @Test
+    fun `running assembleARelease with noUpload should skip upload task`() {
+        val result: BuildResult = GradleRunner.create()
+            .withProjectDir(testTmpPath.toFile())
+            .withPluginClasspath()
+            .withArguments(
+                listOf(
+                    "assembleARelease",
+                    "-PIOKI_SENTRY_NO_UPLOAD=true"
+                )
+            )
+            .build()
+
+        val uploadForAReleaseTask = result.task(":uploadSentryProguardUuidForARelease")
+        expectThat(uploadForAReleaseTask!!.outcome).isEqualTo(TaskOutcome.SKIPPED)
+    }
+
+    @Test
+    fun `running assembleARelease with info should log executed command`() {
+        val result: BuildResult = GradleRunner.create()
+            .withProjectDir(testTmpPath.toFile())
+            .withPluginClasspath()
+            .withArguments(
+                listOf(
+                    "assembleARelease",
+                    "--info"
+                )
+            )
+            .buildAndFail()
+
+        val cliPath = testTmpPath.toAbsolutePath().resolve("build/sentry/cli")
+        val mappingFilePath = testTmpPath.toAbsolutePath().resolve("build/outputs/mapping/aRelease/mapping.txt")
+        val uuidRegexPattern = "[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}"
+        expectThat(result.output) {
+            contains("Execute the following command:")
+            contains("$cliPath upload-proguard --uuid $uuidRegexPattern".toRegex())
+            contains("$mappingFilePath --org sentryOrg --project sentryProject --auth-token sentryAuthToken")
+        }
+    }
+
 }

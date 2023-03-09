@@ -50,8 +50,8 @@ android {
 
 def noUploadToSentry = hasProperty("IOKI_SENTRY_NO_UPLOAD") ? property("IOKI_SENTRY_NO_UPLOAD").toBoolean() : null
 sentryProguard {
-    organization.set("a")
-    project.set("b")
-    authToken.set("c")
+    organization.set("sentryOrg")
+    project.set("sentryProject")
+    authToken.set("sentryAuthToken")
     noUpload.set(noUploadToSentry)
 }

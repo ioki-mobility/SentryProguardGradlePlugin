@@ -18,10 +18,13 @@ internal fun TaskContainer.registerUploadUuidToSentryTask(
         "uploadSentryProguardUuidFor${variantName.replaceFirstChar { it.titlecase() }}",
         UploadUuidToSentryTask::class.java
     ) {
+        it.onlyIf("sentryProguard.noUpload is set to false") {
+            val noUpload = sentryProguardExtension.noUpload.getOrElse(false)
+            !noUpload
+        }
         it.sentryOrg.set(sentryProguardExtension.organization)
         it.sentryProject.set(sentryProguardExtension.project)
         it.sentryAuthToken.set(sentryProguardExtension.authToken)
-        it.noUpload.set(sentryProguardExtension.noUpload)
         it.cliFilePath.set(downloadSentryCliTask.flatMap { it.cliFilePath })
         it.uuid = uuid
         it.variantName = variantName
@@ -53,10 +56,6 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @get:Input
     abstract val sentryAuthToken: Property<String>
 
-    @get:Optional
-    @get:Input
-    abstract val noUpload: Property<Boolean>
-
     @InputFile
     val cliFilePath: RegularFileProperty = project.objects.fileProperty()
 
@@ -75,16 +74,11 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
             sentryProject.get(),
             sentryAuthToken.get()
         )
-        val noUpload = noUpload.getOrElse(false)
-        if (noUpload) {
-            logger.log(LogLevel.INFO, "No upload cause sentryProguard.noUpload were set.")
-        } else {
-            logger.log(LogLevel.INFO, "Execute the following command:\n$command")
-            val process = Runtime.getRuntime().exec(command)
-            val stdIn = process.inputStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
-            val stdErr = process.errorStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
-            if (stdErr.isNotBlank()) throw GradleException("$stdIn \n $stdErr")
-            else println(stdIn)
-        }
+        logger.log(LogLevel.INFO, "Execute the following command:\n$command")
+        val process = Runtime.getRuntime().exec(command)
+        val stdIn = process.inputStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
+        val stdErr = process.errorStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
+        if (stdErr.isNotBlank()) throw GradleException("$stdIn \n $stdErr")
+        else println(stdIn)
     }
 }
