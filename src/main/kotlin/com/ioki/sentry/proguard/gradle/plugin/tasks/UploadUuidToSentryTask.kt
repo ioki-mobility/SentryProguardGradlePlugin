@@ -71,14 +71,15 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
             cliFilePath,
             uuid,
             mappingFilePath,
-            sentryOrg,
-            sentryProject,
-            sentryAuthToken
+            sentryOrg.get(),
+            sentryProject.get(),
+            sentryAuthToken.get()
         )
         val noUpload = noUpload.getOrElse(false)
         if (noUpload) {
-            logger.log(LogLevel.INFO, "No upload cause extension.noUpload were set.")
+            logger.log(LogLevel.INFO, "No upload cause sentryProguard.noUpload were set.")
         } else {
+            logger.log(LogLevel.INFO, "Execute the following command:\n$command")
             val process = Runtime.getRuntime().exec(command)
             val stdIn = process.inputStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
             val stdErr = process.errorStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
