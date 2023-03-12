@@ -129,9 +129,9 @@ class SentryProguardGradlePluginTest {
             .withArguments(listOf("assembleRelease"))
             .buildAndFail()
 
-        expectThat(result.task(":downloadSentryCli")!!.outcome)
+        expectThat(result.task(":downloadSentryCli")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
-        expectThat(result.task(":uploadSentryProguardUuidForARelease")!!.outcome)
+        expectThat(result.task(":uploadSentryProguardUuidForARelease")?.outcome)
             .isEqualTo(TaskOutcome.FAILED)
     }
 
