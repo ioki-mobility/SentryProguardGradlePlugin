@@ -48,10 +48,13 @@ android {
     }
 }
 
-def noUploadToSentry = hasProperty("IOKI_SENTRY_NO_UPLOAD") ? property("IOKI_SENTRY_NO_UPLOAD").toBoolean() : null
 sentryProguard {
     organization.set("sentryOrg")
     project.set("sentryProject")
     authToken.set("sentryAuthToken")
-    noUpload.set(noUploadToSentry)
+    noUpload.set(
+            providers.gradleProperty("IOKI_SENTRY_NO_UPLOAD")
+                    .map { it.toBoolean() }
+                    .orElse(false)
+    )
 }
