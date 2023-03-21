@@ -76,14 +76,18 @@ class SentryProguardGradlePluginPublishingTest {
     @Test
     fun `consuming of plugin publication via jitpack works`() {
         val buildFile = testTmpPath.resolve("build.gradle")
-        val testVersion = System.getenv("IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION")
+        var testVersion = System.getenv("IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION")
             ?: fail(
                 "Please provide plugin version from jitpack" +
                         " via environment variable 'IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION'"
             )
+        val isSemverVersion = Regex("[0-9]+\\.[0-9]+\\.[0-9]+").matches(testVersion)
+        if(!isSemverVersion) {
+            testVersion += "-SNAPSHOT"
+        }
         val newBuildFile = buildFile.readText().replace(
             oldValue = """id "com.ioki.sentry.proguard"""",
-            newValue = """id "com.ioki.sentry.proguard" version "${testVersion}""""
+            newValue = """id "com.ioki.sentry.proguard" version "$testVersion""""
         )
         buildFile.writeText(newBuildFile)
         val settingsFile = testTmpPath.resolve("settings.gradle")
