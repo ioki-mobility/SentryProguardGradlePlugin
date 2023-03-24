@@ -6,6 +6,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 
 internal fun TaskContainer.registerUploadUuidToSentryTask(
@@ -26,8 +27,8 @@ internal fun TaskContainer.registerUploadUuidToSentryTask(
         it.sentryProject.set(sentryProguardExtension.project)
         it.sentryAuthToken.set(sentryProguardExtension.authToken)
         it.cliFilePath.set(downloadSentryCliTask.flatMap { it.cliFilePath })
-        it.uuid = uuid
-        it.variantName = variantName
+        it.uuid.set(uuid)
+        it.variantName.set(variantName)
     }
 
     configureEach { task ->
@@ -41,11 +42,11 @@ internal fun TaskContainer.registerUploadUuidToSentryTask(
 
 internal abstract class UploadUuidToSentryTask : DefaultTask() {
 
-    @Input
-    lateinit var variantName: String
+    @get:Input
+    abstract val variantName: Property<String>
 
-    @Input
-    lateinit var uuid: String
+    @get:Input
+    abstract val uuid: Property<String>
 
     @get:Input
     abstract val sentryOrg: Property<String>
@@ -56,19 +57,18 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @get:Input
     abstract val sentryAuthToken: Property<String>
 
-    @InputFile
-    val cliFilePath: RegularFileProperty = project.objects.fileProperty()
+    @get:InputFile
+    abstract val cliFilePath: RegularFileProperty
 
     private val COMMAND = "%s upload-proguard --uuid %s %s --org %s --project %s --auth-token %s"
 
     @TaskAction
     fun uploadUuidToSentry() {
         val cliFilePath = cliFilePath.get().asFile
-        val uuid = uuid
-        val mappingFilePath = "${project.buildDir}/outputs/mapping/${variantName}/mapping.txt"
+        val mappingFilePath = "${project.buildDir}/outputs/mapping/${variantName.get()}/mapping.txt"
         val command = COMMAND.format(
             cliFilePath,
-            uuid,
+            uuid.get(),
             mappingFilePath,
             sentryOrg.get(),
             sentryProject.get(),

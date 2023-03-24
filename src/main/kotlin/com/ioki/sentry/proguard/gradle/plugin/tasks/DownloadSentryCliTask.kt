@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import java.net.URL
@@ -14,21 +15,21 @@ import kotlin.io.path.deleteIfExists
 internal fun TaskContainer.registerDownloadSentryCliTask(
     cliFilePath: Provider<RegularFile>
 ): TaskProvider<DownloadSentryCliTask> = register("downloadSentryCli", DownloadSentryCliTask::class.java) {
-    it.downloadUrl = findSentryCliDownloadUrl()
+    it.downloadUrl.set(findSentryCliDownloadUrl())
     it.cliFilePath.set(cliFilePath)
 }
 
 internal abstract class DownloadSentryCliTask : DefaultTask() {
 
-    @Input
-    lateinit var downloadUrl: String
+    @get:Input
+    abstract val downloadUrl: Property<String>
 
-    @OutputFile
-    val cliFilePath: RegularFileProperty = project.objects.fileProperty()
+    @get:OutputFile
+    abstract val cliFilePath: RegularFileProperty
 
     @TaskAction
     fun downloadSentryCli() {
-        URL(downloadUrl).openStream().use {
+        URL(downloadUrl.get()).openStream().use {
             val cliFile = cliFilePath.asFile.get().toPath()
             cliFile.deleteIfExists()
             Files.copy(it, cliFile)
