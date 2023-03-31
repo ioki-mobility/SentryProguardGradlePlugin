@@ -19,7 +19,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-caches-v0-${{ hashFiles('build.gradle.kts', 'settings.gradle', 'gradle/wrapper/gradle-wrapper.properties') }}
+          key: gradle-caches-v0-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties') }}
 
       - name: Run 'normal' tests
         run: ./gradlew test --tests 'SentryProguardGradlePluginTest'
@@ -44,7 +44,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-caches-v0-${{ hashFiles('build.gradle.kts', 'settings.gradle', 'gradle/wrapper/gradle-wrapper.properties') }}
+          key: gradle-caches-v0-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties') }}
 
       - name: Publish Plugin to mavenLocal
         run: ./gradlew publishToMavenLocal
