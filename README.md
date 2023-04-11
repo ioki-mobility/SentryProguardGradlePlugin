@@ -93,10 +93,12 @@ sdk.dir=[path/to/the/android/sdk]
 
 # Release
 
+* Checkout `main` branch
 * Update the `version` in [`build.gradle.kts`](build.gradle.kts)
 * Commit with message `Next version`
-* Push to origin
 * Tag the version with the same version and push it to origin
-* Trigger the `publishToGithubPackages` GH action
+  * This triggers the `publishToGithubPackages` GitHub Actions 
 * (Wait until its published)
-* Update the version to the "next **minor** version" and push to origin
+* Update the version to the "next **minor** version" (including `-SNAPSHOT`)
+* Push to origin
+* Create a new [release](https://github.com/ioki-mobility/SentryProguardGradlePlugin/releases/new)
