@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    alias(libs.plugins.kotlin)
     `java-gradle-plugin`
     `maven-publish`
 }
@@ -12,10 +12,10 @@ repositories {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:7.4.1")
+    implementation(libs.androidGradlePlugin)
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
-    testImplementation("io.strikt:strikt-core:0.34.0")
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.strikt)
 }
 
 gradlePlugin {
