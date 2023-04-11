@@ -90,3 +90,13 @@ or adding a `local.properties` file to the `androidTestProject`:
 // on macOS mostly at: ~/Library/Android/sdk
 sdk.dir=[path/to/the/android/sdk]
 ```
+
+# Release
+
+* Update the `version` in [`build.gradle.kts`](build.gradle.kts)
+* Commit with message `Next version`
+* Push to origin
+* Tag the version with the same version and push it to origin
+* Trigger the `publishToGithubPackages` GH action
+* (Wait until its published)
+* Update the version to the "next **minor** version" and push to origin
