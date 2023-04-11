@@ -64,6 +64,16 @@ publishing {
             }
         }
     }
+
+    repositories {
+        maven("https://maven.pkg.github.com/ioki-mobility/SentryProguardGradlePlugin") {
+            name = "GitHubPackages"
+            credentials {
+                username = project.findProperty("githubPackages.user") as? String
+                password = project.findProperty("githubPackages.key") as? String
+            }
+        }
+    }
 }
 
 tasks.test {
