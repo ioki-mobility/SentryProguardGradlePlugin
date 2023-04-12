@@ -7,6 +7,30 @@ and uploads the `UUID` together with the generated `mapping` file to Sentry.
 
 ### Apply the plugin
 
+<details open>
+<summary>Via GitHub Packages</summary>
+
+Add [GitHub Packages](https://github.com/ioki-mobility/SentryProguardGradlePlugin/packages/) to the `settings.gradle[.kts]` file:
+
+```groovy
+pluginManagement {
+    repositories {
+        maven {
+          url("https://maven.pkg.github.com/ioki-mobility/SentryProguardGradlePlugin")
+          credentials {
+            username = "[GitHub_Username]"
+            password = "[GitHub_Secret]"
+          }
+        }
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Via JitPack</summary>
+
 Add [JitPack](https://jitpack.io/) to the `settings.gradle[.kts]` file:
 
 ```groovy
@@ -31,6 +55,8 @@ pluginManagement {
 }
 ```
 
+</details>
+
 Add the plugin to the **Android application** `build.gradle[.kts]` file and configure it:
 
 ```groovy
@@ -46,7 +72,7 @@ sentryProguard {
 }
 ```
 
-> **Note**: The `[CURRENT_VERSION]` can either be a (git) tag (recommended), branch name, or hash 
+> **Note**: If you use JitPack, the `[CURRENT_VERSION]` can either be a (git) tag (recommended), branch name, or hash 
 
 The `sentryProguard.noUpload` function is useful for development purposes.
 Normally, you don't want to upload the mapping file to Sentry while creating a minified version on developer machines.
@@ -90,3 +116,15 @@ or adding a `local.properties` file to the `androidTestProject`:
 // on macOS mostly at: ~/Library/Android/sdk
 sdk.dir=[path/to/the/android/sdk]
 ```
+
+# Release
+
+* Checkout `main` branch
+* Update the `version` in [`build.gradle.kts`](build.gradle.kts)
+* Commit with message `Next version`
+* Tag the version with the same version and push it to origin
+  * This triggers the `publishToGithubPackages` GitHub Actions 
+* (Wait until its published)
+* Update the version to the "next **minor** version" (including `-SNAPSHOT`)
+* Push to origin
+* Create a new [release](https://github.com/ioki-mobility/SentryProguardGradlePlugin/releases/new)

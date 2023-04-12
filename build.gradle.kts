@@ -30,7 +30,7 @@ java {
     withJavadocJar()
 }
 
-version = "1.0.0"
+version = "1.1.0-SNAPSHOT"
 group = "com.ioki"
 publishing {
     publications {
@@ -61,6 +61,16 @@ publishing {
                     connection.set("https://github.com/ioki-mobility/SentryProguardGradlePlugin.git")
                     developerConnection.set("git@github.com:ioki-mobility/SentryProguardGradlePlugin.git")
                 }
+            }
+        }
+    }
+
+    repositories {
+        maven("https://maven.pkg.github.com/ioki-mobility/SentryProguardGradlePlugin") {
+            name = "GitHubPackages"
+            credentials {
+                username = project.findProperty("githubPackages.user") as? String
+                password = project.findProperty("githubPackages.key") as? String
             }
         }
     }
