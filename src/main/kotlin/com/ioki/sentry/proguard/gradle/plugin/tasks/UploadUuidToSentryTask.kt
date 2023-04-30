@@ -60,16 +60,19 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @get:InputFile
     abstract val cliFilePath: RegularFileProperty
 
+    private val mappingFilePath: Provider<String> = variantName.map {
+        "${project.buildDir}/outputs/mapping/$it/mapping.txt"
+    }
+
     private val COMMAND = "%s upload-proguard --uuid %s %s --org %s --project %s --auth-token %s"
 
     @TaskAction
     fun uploadUuidToSentry() {
         val cliFilePath = cliFilePath.get().asFile
-        val mappingFilePath = "${project.buildDir}/outputs/mapping/${variantName.get()}/mapping.txt"
         val command = COMMAND.format(
             cliFilePath,
             uuid.get(),
-            mappingFilePath,
+            mappingFilePath.get(),
             sentryOrg.get(),
             sentryProject.get(),
             sentryAuthToken.get()
