@@ -1,6 +1,6 @@
 [libraries]
 androidGradlePlugin = "com.android.tools.build:gradle:7.4.1"
-test-junit = "org.junit.jupiter:junit-jupiter:5.9.2"
+test-junit = "org.junit.jupiter:junit-jupiter:5.9.3"
 test-strikt = "io.strikt:strikt-core:0.34.1"
 
 [plugins]
