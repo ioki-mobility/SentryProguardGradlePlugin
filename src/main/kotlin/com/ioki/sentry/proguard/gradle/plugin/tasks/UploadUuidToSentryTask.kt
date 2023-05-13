@@ -8,6 +8,8 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
 
 internal fun TaskContainer.registerUploadUuidToSentryTask(
     variantName: String,
@@ -60,6 +62,9 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @get:InputFile
     abstract val cliFilePath: RegularFileProperty
 
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
     private val mappingFilePath: Provider<String> = variantName.map {
         "${project.buildDir}/outputs/mapping/$it/mapping.txt"
     }
@@ -78,10 +83,8 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
             sentryAuthToken.get()
         )
         logger.log(LogLevel.INFO, "Execute the following command:\n$command")
-        val process = Runtime.getRuntime().exec(command)
-        val stdIn = process.inputStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
-        val stdErr = process.errorStream.bufferedReader().useLines { it.toList() }.joinToString(separator = "\n")
-        if (stdErr.isNotBlank()) throw GradleException("$stdIn \n $stdErr")
-        else println(stdIn)
+        execOperations.exec {
+            it.commandLine(command)
+        }
     }
 }

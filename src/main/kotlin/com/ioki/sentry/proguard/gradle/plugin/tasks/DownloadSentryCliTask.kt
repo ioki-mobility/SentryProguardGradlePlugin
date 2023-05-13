@@ -7,9 +7,11 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import java.net.URL
 import java.nio.file.Files
 import java.util.*
+import javax.inject.Inject
 import kotlin.io.path.deleteIfExists
 
 internal fun TaskContainer.registerDownloadSentryCliTask(
@@ -27,6 +29,9 @@ internal abstract class DownloadSentryCliTask : DefaultTask() {
     @get:OutputFile
     abstract val cliFilePath: RegularFileProperty
 
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
     @TaskAction
     fun downloadSentryCli() {
         URL(downloadUrl.get()).openStream().use {
@@ -34,7 +39,9 @@ internal abstract class DownloadSentryCliTask : DefaultTask() {
             cliFile.deleteIfExists()
             Files.copy(it, cliFile)
         }
-        Runtime.getRuntime().exec("chmod u+x ${cliFilePath.asFile.get().absolutePath}")
+        execOperations.exec {
+            it.commandLine("chmod", "u+x", cliFilePath.asFile.get().absolutePath)
+        }
     }
 }
 
