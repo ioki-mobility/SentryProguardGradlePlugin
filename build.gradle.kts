@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.wrapperUpgrade)
     `java-gradle-plugin`
     `maven-publish`
 }
@@ -82,4 +83,14 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
+}
+
+
+wrapperUpgrade {
+    gradle {
+        create("sentryProguardGradlePlugin") {
+            repo.set("ioki-mobility/SentryProguardGradlePlugin")
+            baseBranch.set("main")
+        }
+    }
 }
