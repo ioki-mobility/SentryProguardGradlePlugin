@@ -81,10 +81,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
-}
-
+kotlin.jvmToolchain(11)
 
 wrapperUpgrade {
     gradle {
