@@ -35,7 +35,7 @@ class SentryProguardGradlePluginPublishingTest {
         val buildFile = testTmpPath.resolve("build.gradle")
         val newBuildFile = buildFile.readText().replace(
             oldValue = """id "com.ioki.sentry.proguard"""",
-            newValue = """id "com.ioki.sentry.proguard" version "1.1.0-SNAPSHOT""""
+            newValue = """id "com.ioki.sentry.proguard" version "1.1.0""""
         )
         buildFile.writeText(newBuildFile)
         val settingsFile = testTmpPath.resolve("settings.gradle")
