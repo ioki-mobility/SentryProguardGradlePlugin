@@ -31,7 +31,7 @@ java {
     withJavadocJar()
 }
 
-version = "1.2.0-SNAPSHOT"
+version = "1.1.1"
 group = "com.ioki"
 publishing {
     publications {
