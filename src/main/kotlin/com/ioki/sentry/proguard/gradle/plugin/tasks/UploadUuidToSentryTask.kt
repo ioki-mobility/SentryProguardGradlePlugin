@@ -69,17 +69,20 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
         "${project.buildDir}/outputs/mapping/$it/mapping.txt"
     }
 
-    private val COMMAND = "%s upload-proguard --uuid %s %s --org %s --project %s --auth-token %s"
-
     @TaskAction
     fun uploadUuidToSentry() {
-        val cliFilePath = cliFilePath.get().asFile
-        val command = COMMAND.format(
+        val cliFilePath = cliFilePath.get().asFile.absolutePath
+        val command = listOf(
             cliFilePath,
+            "upload-proguard",
+            "--uuid",
             uuid.get(),
             mappingFilePath.get(),
+            "--org",
             sentryOrg.get(),
+            "--project",
             sentryProject.get(),
+            "--auth-token",
             sentryAuthToken.get()
         )
         logger.log(LogLevel.INFO, "Execute the following command:\n$command")
