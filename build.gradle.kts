@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.wrapperUpgrade)
@@ -81,7 +79,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-kotlin.jvmToolchain(11)
+kotlin.jvmToolchain(17)
 
 wrapperUpgrade {
     gradle {
