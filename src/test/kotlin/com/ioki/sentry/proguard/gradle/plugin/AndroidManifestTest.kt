@@ -48,8 +48,8 @@ class AndroidManifestTest {
             .build()
 
         expectThat(androidManifest.exists()).isTrue()
-        expectThat(androidManifest.readText()).contains("android:name=\"io.sentry.proguard-uuid\"")
-        expectThat(androidManifest.readText()).contains("android:value=\"\"")
+        expectThat(androidManifest.readText()).not().contains("android:name=\"io.sentry.proguard-uuid\"")
+        expectThat(androidManifest.readText()).not().contains("android:value=\"\"")
     }
 
     @Test
