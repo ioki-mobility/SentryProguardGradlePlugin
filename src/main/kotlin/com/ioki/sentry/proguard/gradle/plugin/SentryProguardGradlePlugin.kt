@@ -1,7 +1,9 @@
 package com.ioki.sentry.proguard.gradle.plugin
 
+import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ApplicationVariant
+import com.ioki.sentry.proguard.gradle.plugin.tasks.registerAddSentryMetadataToManifestTask
 import com.ioki.sentry.proguard.gradle.plugin.tasks.registerDownloadSentryCliTask
 import com.ioki.sentry.proguard.gradle.plugin.tasks.registerUploadUuidToSentryTask
 import org.gradle.api.Plugin
@@ -31,7 +33,17 @@ private fun Project.replaceSentryProguardUuidInAndroidManifest(
         if (minifyEnabled) {
             val uuid = UUID.randomUUID().toString()
 
-            variant.manifestPlaceholders.put("sentryProguardUuid", uuid)
+            val metadataToManifestTask = tasks.registerAddSentryMetadataToManifestTask(
+                variantName = variant.name,
+                uuid = uuid
+            )
+
+            variant.artifacts.use(metadataToManifestTask)
+                .wiredWithFiles(
+                    { it.mergedManifest },
+                    { it.updatedManifest }
+                )
+                .toTransform(SingleArtifact.MERGED_MANIFEST)
 
             tasks.registerUploadUuidToSentryTask(
                 variantName = variant.name,
@@ -39,8 +51,6 @@ private fun Project.replaceSentryProguardUuidInAndroidManifest(
                 downloadSentryCliTask = downloadSentryCliTask,
                 sentryProguardExtension = sentryProguardExtension,
             )
-        } else {
-            variant.manifestPlaceholders.put("sentryProguardUuid", "")
         }
     }
 }

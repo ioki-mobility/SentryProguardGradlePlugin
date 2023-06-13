@@ -2,7 +2,6 @@ package com.ioki.sentry.proguard.gradle.plugin.tasks
 
 import com.ioki.sentry.proguard.gradle.plugin.SentryProguardExtension
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
