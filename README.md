@@ -1,6 +1,6 @@
 # SentryProguardGradlePlugin
 
-A Gradle plugin that generated `UUIDs`, add it to your `AndroidManifest.xml` 
+A Gradle plugin that generated `UUIDs`, adds it to your `AndroidManifest.xml` 
 and uploads the `UUID` together with the generated `mapping` file to Sentry.     
 
 ## Usage
@@ -88,22 +88,13 @@ sentryProguard {
 
 By default, you don't set the [Gradle property](https://docs.gradle.org/8.0.2/userguide/build_environment.html#sec:gradle_configuration_properties).
 In this case the plugin won't upload the mapping files.
-On your CI, however, you set the property and therefore the mapping file will be uploaded. 
-
-### Add a AndroidManifest placeholder
-
-```xml
-<meta-data
-    android:name="io.sentry.proguard-uuid"
-    android:value="${sentryProguardUuid}"
-/>
-```
+On your CI, however, you set the property and therefore the mapping file will be uploaded.
 
 ## How it works under the hood
 
 If you run "any" task on a [`minifiedEnabled`](https://developer.android.com/reference/tools/gradle-api/8.0/com/android/build/api/variant/CanMinifyCode) [build type](https://developer.android.com/studio/build/build-variants#build-types), the Plugin will:
 * Generate a `UUID`
-* Replace the `AndroidManifest` placeholder with it
+* Place a `<meta-data>` attribute to the `AndroidManifest.xml` (see also this [sentry-android-gradle-plugin code](https://github.com/getsentry/sentry-android-gradle-plugin/blob/fa322a5060fb29073006d4e0d2cb2c2b4eb39aaf/plugin-build/src/main/kotlin/io/sentry/android/gradle/ManifestWriter.kt#L11))
 * Create a task to download the Sentry CLI
 * Create a task for each build variant that uploads the `UUID` along with the `mapping` file via the [Sentry CLI](https://docs.sentry.io/product/cli/)
 * Hook the created tasks into the task graph (adds a `finalizedBy(uploadUuidTask)` to the `minify[BuildVariant]WithR8` task)
