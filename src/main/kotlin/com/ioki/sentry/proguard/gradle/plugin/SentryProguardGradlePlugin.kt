@@ -3,24 +3,11 @@ package com.ioki.sentry.proguard.gradle.plugin
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ApplicationVariant
-import com.ioki.sentry.proguard.gradle.plugin.tasks.AddSentryMetadataToManifestTask
 import com.ioki.sentry.proguard.gradle.plugin.tasks.registerAddSentryMetadataToManifestTask
 import com.ioki.sentry.proguard.gradle.plugin.tasks.registerDownloadSentryCliTask
 import com.ioki.sentry.proguard.gradle.plugin.tasks.registerUploadUuidToSentryTask
-import groovy.util.Node
-import groovy.util.NodeList
-import groovy.xml.XmlNodePrinter
-import groovy.xml.XmlParser
-import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
-import java.io.PrintWriter
-import java.io.StringWriter
 import java.util.*
 
 private const val SENTRY_CLI_FILE_PATH = "sentry/cli"

@@ -5,9 +5,7 @@ import groovy.util.NodeList
 import groovy.xml.XmlNodePrinter
 import groovy.xml.XmlParser
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import java.io.PrintWriter
 import java.io.StringWriter
