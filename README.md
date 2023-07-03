@@ -1,7 +1,7 @@
 # SentryProguardGradlePlugin
 
 [![CI](https://github.com/ioki-mobility/SentryProguardGradlePlugin/actions/workflows/test-plugin.yml/badge.svg)](https://github.com/ioki-mobility/SentryProguardGradlePlugin/actions/workflows/test-plugin.yml)
-[![Jitpack](https://jitpack.io/v/ioki-mobility/TextRef.svg)](https://jitpack.io/#ioki-mobility/SentryProguardGradlePlugin)
+[![Jitpack](https://jitpack.io/v/ioki-mobility/SentryProguardGradlePlugin.svg)](https://jitpack.io/#ioki-mobility/SentryProguardGradlePlugin)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ioki-mobility/SentryProguardGradlePlugin/blob/master/LICENSE.md)
 
 A Gradle plugin that generated `UUIDs`, adds it to your `AndroidManifest.xml` 
