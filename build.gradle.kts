@@ -40,7 +40,7 @@ publishing {
                 licenses {
                     license {
                         name.set("MIT License")
-                        url.set("https://github.com/ioki-mobility/SentryProguardGradlePlugin/LICENSE.md")
+                        url.set("https://github.com/ioki-mobility/SentryProguardGradlePlugin/blob/main/LICENSE.md")
                     }
                 }
                 organization {
