@@ -11,56 +11,6 @@ and uploads the `UUID` together with the generated `mapping` file to Sentry.
 
 ### Apply the plugin
 
-<details open>
-<summary>Via GitHub Packages</summary>
-
-Add [GitHub Packages](https://github.com/ioki-mobility/SentryProguardGradlePlugin/packages/) to the `settings.gradle[.kts]` file:
-
-```groovy
-pluginManagement {
-    repositories {
-        maven {
-          url("https://maven.pkg.github.com/ioki-mobility/SentryProguardGradlePlugin")
-          credentials {
-            username = "[GitHub_Username]"
-            password = "[GitHub_Secret]"
-          }
-        }
-    }
-}
-```
-
-</details>
-
-<details>
-<summary>Via JitPack</summary>
-
-Add [JitPack](https://jitpack.io/) to the `settings.gradle[.kts]` file:
-
-```groovy
-pluginManagement {
-    repositories {
-        maven { 
-            url("https://jitpack.io")
-            content {
-                includeGroup("com.github.ioki-mobility.SentryProguardGradlePlugin")
-            }
-        }
-        resolutionStrategy {
-            it.eachPlugin {
-                if (requested.id.id == "com.ioki.sentry.proguard") {
-                    useModule(
-                        "com.github.ioki-mobility.SentryProguardGradlePlugin:sentry-proguard:${requested.version}"
-                    )
-                }
-            }
-        }
-    }
-}
-```
-
-</details>
-
 Add the plugin to the **Android application** `build.gradle[.kts]` file and configure it:
 
 ```groovy
@@ -75,8 +25,6 @@ sentryProguard {
     noUpload.set(false)
 }
 ```
-
-> **Note**: If you use JitPack, the `[CURRENT_VERSION]` can either be a (git) tag (recommended), branch name, or hash 
 
 The `sentryProguard.noUpload` function is useful for development purposes.
 Normally, you don't want to upload the mapping file to Sentry while creating a minified version on developer machines.
@@ -114,12 +62,30 @@ sdk.dir=[path/to/the/android/sdk]
 
 # Release
 
+## Snapshot release
+
+By default, each merge to the `main` branch will create a new SNAPSHOT release.
+If you want to use the latest and greatest use the SNAPSHOT version of the plugin.
+But please be aware that they might contain bugs or behaviour changes.
+
+To use the SNAPSHOT version you have to include the sonatype snapshot repository to your `settings.gradle[.kts]`
+```kotlin
+pluginManagement {
+    repositories {
+        maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+```
+
+## Proper release
+
 * Checkout `main` branch
 * Update the `version` in [`build.gradle.kts`](build.gradle.kts)
-* Commit with message `Next version`
+* Commit 
+  * `git commit -m "Prepare next relaese"`
 * Tag the version with the same version and push it to origin
-  * This triggers the `publishToGithubPackages` GitHub Actions 
-* (Wait until its published)
+  * `git tag [VERSION]`
+  * `git push origin [VERSION]`
 * Update the version to the "next **minor** version" (including `-SNAPSHOT`)
-* Push to origin
-* Create a new [release](https://github.com/ioki-mobility/SentryProguardGradlePlugin/releases/new)
+* Commit and push
+* Create a new [GitHub release](https://github.com/ioki-mobility/SentryProguardGradlePlugin/releases/new)
