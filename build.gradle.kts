@@ -35,6 +35,8 @@ publishing {
         register("pluginMaven", MavenPublication::class.java) {
             artifactId = "sentry-proguard"
             pom {
+                name.set("SentryProguardGradlePlugin")
+                description.set("A Gradle plugin that generated UUIDs, add it to your AndroidManifest.xml and uploads the UUID together with the generated mapping file to Sentry.")
                 url.set("https://github.com/ioki-mobility/SentryProguardGradlePlugin")
                 licenses {
                     license {
@@ -52,12 +54,13 @@ publishing {
                         email.set("StefMaDev@outlook.com")
                         url.set("https://StefMa.guru")
                         organization.set("ioki")
+                        organizationUrl.set("https://ioki.com")
                     }
                 }
                 scm {
                     url.set("https://github.com/ioki-mobility/SentryProguardGradlePlugin")
-                    connection.set("https://github.com/ioki-mobility/SentryProguardGradlePlugin.git")
-                    developerConnection.set("git@github.com:ioki-mobility/SentryProguardGradlePlugin.git")
+                    connection.set("scm:git:git://github.com/ioki-mobility/SentryProguardGradlePlugin.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:ioki-mobility/SentryProguardGradlePlugin.git")
                 }
             }
         }
