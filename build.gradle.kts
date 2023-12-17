@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin)
     `java-gradle-plugin`
     `maven-publish`
+    signing
 }
 
 repositories {
@@ -82,3 +83,10 @@ tasks.test {
 }
 
 kotlin.jvmToolchain(17)
+
+signing {
+    val signingKey = System.getenv("GPG_SIGNING_KEY")
+    val signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications)
+}
