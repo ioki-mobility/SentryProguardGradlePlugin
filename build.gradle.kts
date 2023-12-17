@@ -29,11 +29,11 @@ java {
 }
 
 version = "2.2.0-SNAPSHOT"
-group = "com.ioki"
+group = "com.ioki.sentry.proguard"
 publishing {
     publications {
         register("pluginMaven", MavenPublication::class.java) {
-            artifactId = "sentry-proguard"
+            artifactId = "sentry-proguard-gradle-plugin"
             pom {
                 name.set("SentryProguardGradlePlugin")
                 description.set("A Gradle plugin that generated UUIDs, add it to your AndroidManifest.xml and uploads the UUID together with the generated mapping file to Sentry.")
