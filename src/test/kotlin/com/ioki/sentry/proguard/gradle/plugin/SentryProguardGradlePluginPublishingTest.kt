@@ -31,7 +31,7 @@ class SentryProguardGradlePluginPublishingTest {
     }
 
     @Test
-    fun `consuming of plugin marker publication works`() {
+    fun `consuming of plugin marker publication via mavenLocal works`() {
         val buildFile = testTmpPath.resolve("build.gradle")
         val newBuildFile = buildFile.readText().replace(
             oldValue = """id "com.ioki.sentry.proguard"""",
@@ -71,54 +71,6 @@ class SentryProguardGradlePluginPublishingTest {
             uploadForBReleaseTask,
             uploadForCReleaseTask
         )
-    }
-
-    @Test
-    fun `consuming of plugin publication via jitpack works`() {
-        val buildFile = testTmpPath.resolve("build.gradle")
-        var testVersion = System.getenv("IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION")
-            ?: fail(
-                "Please provide plugin version from jitpack" +
-                        " via environment variable 'IOKI_SENTRY_PROGUARD_PLUGIN_TEST_VERSION'"
-            )
-        val isSemverVersion = Regex("[0-9]+\\.[0-9]+\\.[0-9]+").matches(testVersion)
-        if(!isSemverVersion) {
-            testVersion += "-SNAPSHOT"
-        }
-        val newBuildFile = buildFile.readText().replace(
-            oldValue = """id "com.ioki.sentry.proguard"""",
-            newValue = """id "com.ioki.sentry.proguard" version "$testVersion""""
-        )
-        buildFile.writeText(newBuildFile)
-        val settingsFile = testTmpPath.resolve("settings.gradle")
-        val newSettingsFile = settingsFile.readText().replace(
-            oldValue = """gradlePluginPortal()""",
-            newValue =
-            """
-                gradlePluginPortal() 
-                maven { url("https://jitpack.io") }
-                resolutionStrategy {
-                    it.eachPlugin {
-                        if (requested.id.id == "com.ioki.sentry.proguard") {
-                            useModule(
-                                   "com.github.ioki-mobility.SentryProguardGradlePlugin:sentry-proguard:${'$'}{requested.version}"
-                            )
-                        }
-                    }
-                }
-            """
-        )
-        settingsFile.writeText(newSettingsFile)
-
-        val result: BuildResult = GradleRunner.create()
-            .withProjectDir(testTmpPath.toFile())
-            .withArguments(listOf("assembleRelease"))
-            .buildAndFail()
-
-        expectThat(result.task(":downloadSentryCli")?.outcome)
-            .isEqualTo(TaskOutcome.SUCCESS)
-        expectThat(result.task(":uploadSentryProguardUuidForARelease")?.outcome)
-            .isEqualTo(TaskOutcome.FAILED)
     }
 
 }

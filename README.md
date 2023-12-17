@@ -81,11 +81,13 @@ pluginManagement {
 
 * Checkout `main` branch
 * Update the `version` in [`build.gradle.kts`](build.gradle.kts)
+* Update the version for the `consuming of plugin marker publication via mavenLocal works` test
 * Commit 
   * `git commit -m "Prepare next relaese"`
 * Tag the version with the same version and push it to origin
   * `git tag [VERSION]`
   * `git push origin [VERSION]`
 * Update the version to the "next **minor** version" (including `-SNAPSHOT`)
+* Update the version for the `consuming of plugin marker publication via mavenLocal works` test
 * Commit and push
 * Create a new [GitHub release](https://github.com/ioki-mobility/SentryProguardGradlePlugin/releases/new)
