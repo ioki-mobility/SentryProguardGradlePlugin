@@ -29,7 +29,7 @@ java {
     withJavadocJar()
 }
 
-version = "2.2.0-SNAPSHOT"
+version = "2.2.0"
 group = "com.ioki.sentry.proguard"
 publishing {
     publications {
