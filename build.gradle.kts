@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.dokka)
     `java-gradle-plugin`
     `maven-publish`
     signing
@@ -28,7 +29,12 @@ gradlePlugin {
 
 java {
     withSourcesJar()
-    withJavadocJar()
+}
+
+val dokkaJar = tasks.register<Jar>("dokkaJar") {
+    dependsOn(tasks.dokkaHtml)
+    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
 }
 
 version = "2.3.0-SNAPSHOT"
@@ -36,6 +42,7 @@ group = "com.ioki.sentry.proguard"
 publishing {
     publications {
         register("pluginMaven", MavenPublication::class.java) {
+            artifact(dokkaJar)
             artifactId = "sentry-proguard-gradle-plugin"
         }
         withType<MavenPublication>().configureEach {
