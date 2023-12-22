@@ -47,7 +47,11 @@ internal abstract class DownloadSentryCliTask : DefaultTask() {
 
 private fun findSentryCliDownloadUrl(): String {
     val osName = System.getProperty("os.name").lowercase(Locale.ROOT)
+
     return when {
+        osName.contains("mac") && System.getProperty("os.arch") == "x86_64" ->
+            "https://github.com/getsentry/sentry-cli/releases/download/2.12.0/sentry-cli-Darwin-x86_64"
+
         osName.contains("mac") ->
             "https://github.com/getsentry/sentry-cli/releases/download/2.12.0/sentry-cli-Darwin-arm64"
 
