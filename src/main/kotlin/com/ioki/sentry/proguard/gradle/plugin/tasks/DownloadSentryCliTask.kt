@@ -46,13 +46,20 @@ internal abstract class DownloadSentryCliTask : DefaultTask() {
 }
 
 private fun findSentryCliDownloadUrl(): String {
+    val releaseDownloadsUrl = "https://github.com/getsentry/sentry-cli/releases/download/2.23.1"
     val osName = System.getProperty("os.name").lowercase(Locale.ROOT)
     return when {
         osName.contains("mac") ->
-            "https://github.com/getsentry/sentry-cli/releases/download/2.12.0/sentry-cli-Darwin-arm64"
+            "$releaseDownloadsUrl/sentry-cli-Darwin-universal"
 
         osName.contains("nix") || osName.contains("nux") || osName.contains("aix") ->
-            "https://github.com/getsentry/sentry-cli/releases/download/2.12.0/sentry-cli-Linux-x86_64"
+            "$releaseDownloadsUrl/sentry-cli-Linux-x86_64"
+
+        osName.contains("windows") && System.getProperty("os.arch") in listOf("x86", "ia32") ->
+            "$releaseDownloadsUrl/sentry-cli-Windows-i686.exe"
+
+        osName.contains("windows") ->
+            "$releaseDownloadsUrl/sentry-cli-Windows-x86_64.exe"
 
         else -> throw GradleException("We do not support $osName")
     }
