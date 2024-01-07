@@ -114,4 +114,5 @@ signing {
     val signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign(publishing.publications)
+    isRequired = hasProperty("GPG_SIGNING_REQUIRED")
 }

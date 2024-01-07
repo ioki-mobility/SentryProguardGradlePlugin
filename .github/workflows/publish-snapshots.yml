@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Publish to Github Packages
-        run: ./gradlew publishAllPublicationsToGitHubPackagesRepository -PgithubPackages.user=$GITHUB_ACTOR -PgithubPackages.key=${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew publishAllPublicationsToGitHubPackagesRepository -PGPG_SIGNING_REQUIRED -PgithubPackages.user=$GITHUB_ACTOR -PgithubPackages.key=${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Sonatype Snapshot
-        run: ./gradlew publishAllPublicationsToSonatypeSnapshotRepository
+        run: ./gradlew publishAllPublicationsToSonatypeSnapshotRepository -PGPG_SIGNING_REQUIRED
