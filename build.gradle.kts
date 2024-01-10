@@ -23,7 +23,8 @@ gradlePlugin {
         id = "com.ioki.sentry.proguard"
         implementationClass = "com.ioki.sentry.proguard.gradle.plugin.SentryProguardGradlePlugin"
         displayName = "SentryProguardGradlePlugin"
-        description = "A Gradle plugin that generated UUIDs, add it to your AndroidManifest.xml and uploads the UUID together with the generated mapping file to Sentry."
+        description =
+            "A Gradle plugin that generated UUIDs, add it to your AndroidManifest.xml and uploads the UUID together with the generated mapping file to Sentry."
     }
 }
 
@@ -112,7 +113,7 @@ kotlin.jvmToolchain(17)
 signing {
     val signingKey = System.getenv("GPG_SIGNING_KEY")
     val signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign(publishing.publications)
     isRequired = hasProperty("GPG_SIGNING_REQUIRED")
+    if (isRequired) useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications)
 }
