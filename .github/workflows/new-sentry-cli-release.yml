@@ -14,7 +14,7 @@ jobs:
 
       - name: Get current Sentry CLI version
         id: current-version
-        run: echo "version=$(cat SENTRY_CLI_VERSION)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(cat src/main/resources/SENTRY_CLI_VERSION)" >> "$GITHUB_OUTPUT"
 
       - name: Get latest Sentry CLI version
         id: latest-release
@@ -37,6 +37,7 @@ jobs:
             console.log(`Latest version: ${latestVersion}`)
             if (semver.gt(latestVersion, currentVersion)) {
               console.log('A new version is available, creating a PR...')
+              await exec.exec("echo ${latestVersion} >> src/main/resources/SENTRY_CLI_VERSION")
               const branchName = `update-version-${currentVersion}-to-${latestVersion}`
               await exec.exec("git config user.name 'github-actions[bot]'");
               await exec.exec("git config user.email 'github-actions[bot]@users.noreply.github.com'");
