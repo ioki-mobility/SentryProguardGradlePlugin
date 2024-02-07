@@ -26,26 +26,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Install semver
+        run: npm install semver
+
       - name: Compare versions and create PR if needed
         uses: actions/github-script@v7
         with:
           script: |
             const semver = require('semver')
+            const fs = require('fs')
             const currentVersion = '${{ steps.current-version.outputs.version }}'
-            const latestVersion = '${{ fromJson(steps.latest-release.outputs.data)[0].tag_name }}'
+            const latestVersion = '${{ fromJson(steps.latest-release.outputs.data).tag_name }}'
             console.log(`Current version: ${currentVersion}`)
             console.log(`Latest version: ${latestVersion}`)
             if (semver.gt(latestVersion, currentVersion)) {
               console.log('A new version is available, creating a PR...')
-              await exec.exec("echo ${latestVersion} >> src/main/resources/SENTRY_CLI_VERSION")
-              const branchName = `update-version-${currentVersion}-to-${latestVersion}`
+              await fs.writeFileSync("src/main/resources/SENTRY_CLI_VERSION", latestVersion)
+              const branchName = `update-sentry-cli-from-${currentVersion}-to-${latestVersion}`
               await exec.exec("git config user.name 'github-actions[bot]'");
               await exec.exec("git config user.email 'github-actions[bot]@users.noreply.github.com'");
-              await exec.exec("git checkout -b ${branchName}")
-              await exec.exec(`git commit -m "Upgrade Sentry CLI from ${currentVersion} to ${latestVersion}" .`)
-              await exec.exec("git push origin ${branchName}")
+              await exec.exec(`git checkout -b ${branchName}`)
+              await exec.exec(`git commit -m "Update Sentry CLI from ${currentVersion} to ${latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
+              await exec.exec(`git push origin ${branchName}`)
               
-              await github.pulls.create({
+              await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
