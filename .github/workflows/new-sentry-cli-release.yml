@@ -1,0 +1,57 @@
+name: Get New Sentry CLI Releases
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repo
+        uses: actions/checkout@v4
+
+      - name: Get current Sentry CLI version
+        id: current-version
+        run: echo "version=$(cat src/main/resources/SENTRY_CLI_VERSION)" >> "$GITHUB_OUTPUT"
+
+      - name: Get latest Sentry CLI version
+        id: latest-release
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/{owner}/{repo}/releases/latest
+          owner: 'getsentry'
+          repo: 'sentry-cli'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compare versions and create PR if needed
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const semver = require('semver')
+            const currentVersion = '${{ steps.current-version.outputs.version }}'
+            const latestVersion = '${{ fromJson(steps.latest-release.outputs.data)[0].tag_name }}'
+            console.log(`Current version: ${currentVersion}`)
+            console.log(`Latest version: ${latestVersion}`)
+            if (semver.gt(latestVersion, currentVersion)) {
+              console.log('A new version is available, creating a PR...')
+              await exec.exec("echo ${latestVersion} >> src/main/resources/SENTRY_CLI_VERSION")
+              const branchName = `update-version-${currentVersion}-to-${latestVersion}`
+              await exec.exec("git config user.name 'github-actions[bot]'");
+              await exec.exec("git config user.email 'github-actions[bot]@users.noreply.github.com'");
+              await exec.exec("git checkout -b ${branchName}")
+              await exec.exec(`git commit -m "Upgrade Sentry CLI from ${currentVersion} to ${latestVersion}" .`)
+              await exec.exec("git push origin ${branchName}")
+              
+              await github.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
+                head: branchName,
+                base: 'main'
+              })
+            } else {
+              console.log('No new version available, nothing to do.')
+            }

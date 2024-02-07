@@ -17,7 +17,8 @@ import kotlin.io.path.deleteIfExists
 internal fun TaskContainer.registerDownloadSentryCliTask(
     cliFilePath: Provider<RegularFile>
 ): TaskProvider<DownloadSentryCliTask> = register("downloadSentryCli", DownloadSentryCliTask::class.java) {
-    it.downloadUrl.set(findSentryCliDownloadUrl())
+    val sentryCliVersion = object {}.javaClass.getResource("/SENTRY_CLI_VERSION").readText()
+    it.downloadUrl.set(findSentryCliDownloadUrl(sentryCliVersion))
     it.cliFilePath.set(cliFilePath)
 }
 
@@ -45,8 +46,8 @@ internal abstract class DownloadSentryCliTask : DefaultTask() {
     }
 }
 
-private fun findSentryCliDownloadUrl(): String {
-    val releaseDownloadsUrl = "https://github.com/getsentry/sentry-cli/releases/download/2.23.1"
+private fun findSentryCliDownloadUrl(version: String): String {
+    val releaseDownloadsUrl = "https://github.com/getsentry/sentry-cli/releases/download/$version"
     val osName = System.getProperty("os.name").lowercase(Locale.ROOT)
     return when {
         osName.contains("mac") ->
