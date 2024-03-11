@@ -5,4 +5,4 @@ test-strikt = "io.strikt:strikt-core:0.34.1"
 
 [plugins]
 kotlin = "org.jetbrains.kotlin.jvm:1.9.23"
-dokka = "org.jetbrains.dokka:1.9.10"
+dokka = "org.jetbrains.dokka:1.9.20"
