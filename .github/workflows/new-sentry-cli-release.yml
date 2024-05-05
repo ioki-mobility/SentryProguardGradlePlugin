@@ -56,13 +56,14 @@ jobs:
               const releaseUrl = '${{ fromJson(steps.latest-release.outputs.data).html_url }}'
               const releaseBody = '${{ fromJson(steps.latest-release.outputs.data).body }}'
 
-              const prBody = releaseUrl # add body too
+              const prBody = releaseUrl # add releaseBody too
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
+                body: `Latest release: ${releaseUrl}.`,
                 head: branchName,
-                base: 'main'
+                base: 'StefMa-patch-1'
               })
             } else {
               console.log('No new version available, nothing to do.')
