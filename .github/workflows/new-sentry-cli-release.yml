@@ -47,14 +47,14 @@ jobs:
             const fs = require('fs')
             console.log(`Current version: ${process.env.currentVersion}`)
             console.log(`Latest version: ${process.env.latestVersion}`)
-            if (semver.gt(latestVersion, currentVersion)) {
+            if (semver.gt(process.env.latestVersion, process.env.currentVersion)) {
               console.log('A new version is available, creating a PR...')
-              await fs.writeFileSync("src/main/resources/SENTRY_CLI_VERSION", latestVersion)
-              const branchName = `update-sentry-cli-from-${currentVersion}-to-${latestVersion}`
+              await fs.writeFileSync("src/main/resources/SENTRY_CLI_VERSION", process.env.latestVersion)
+              const branchName = `update-sentry-cli-from-${process.env.currentVersion}-to-${process.env.latestVersion}`
               await exec.exec("git config user.name 'github-actions[bot]'");
               await exec.exec("git config user.email 'github-actions[bot]@users.noreply.github.com'");
               await exec.exec(`git checkout -b ${branchName}`)
-              await exec.exec(`git commit -m "Update Sentry CLI from ${currentVersion} to ${latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
+              await exec.exec(`git commit -m "Update Sentry CLI from ${process.env.currentVersion} to ${process.env.latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
               await exec.exec(`git push origin ${branchName}`)
 
               console.log(`Url to latest release: ${process.env.latestReleaseUr}`)
