@@ -62,7 +62,7 @@ jobs:
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
+                title: `Update Sentry CLI from ${process.env.currentVersion} to ${process.env.latestVersion}`,
                 body: `${process.env.latestUrl}\n\n${process.env.latestBody}`,
                 head: branchName,
                 base: 'main'
