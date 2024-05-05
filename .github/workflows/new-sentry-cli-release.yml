@@ -41,7 +41,8 @@ jobs:
             const semver = require('semver')
             const fs = require('fs')
             const currentVersion = '${{ steps.current-version.outputs.version }}'
-            const latestVersion = '${{ fromJson(steps.latest-release.outputs.data).tag_name }}'
+            const latestReleaseData = '${{ fromJson(steps.latest-release.outputs.data) }}'
+            const latestVersion = latestReleaseData.tag_name
             console.log(`Current version: ${currentVersion}`)
             console.log(`Latest version: ${latestVersion}`)
             if (semver.gt(latestVersion, currentVersion)) {
@@ -54,6 +55,8 @@ jobs:
               await exec.exec(`git commit -m "Update Sentry CLI from ${currentVersion} to ${latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
               await exec.exec(`git push origin ${branchName}`)
 
+              const latestReleaseUrl = latestReleaseData.html_url
+              console.log(`Url to latest release: ${latestReleaseUrl}`)
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
