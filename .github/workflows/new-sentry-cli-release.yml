@@ -53,17 +53,16 @@ jobs:
               await exec.exec(`git checkout -b ${branchName}`)
               await exec.exec(`git commit -m "Update Sentry CLI from ${currentVersion} to ${latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
               await exec.exec(`git push origin ${branchName}`)
+
               const releaseUrl = '${{ fromJson(steps.latest-release.outputs.data).html_url }}'
               const releaseBody = '${{ fromJson(steps.latest-release.outputs.data).body }}'
-
-              const prBody = releaseUrl # add releaseBody too
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
-                body: `Latest release: ${releaseUrl}.`,
+                body: `Latest release: ${releaseUrl}.\n\n${releaseBody}`,
                 head: branchName,
-                base: 'StefMa-patch-1'
+                base: 'main'
               })
             } else {
               console.log('No new version available, nothing to do.')
