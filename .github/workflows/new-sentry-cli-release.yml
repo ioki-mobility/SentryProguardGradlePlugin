@@ -36,14 +36,17 @@ jobs:
 
       - name: Compare versions and create PR if needed
         uses: actions/github-script@v7
+        env:
+          currentVersion: '${{ steps.current-version.outputs.version }}'
+          latestVersion: '${{ fromJson(steps.latest-release.outputs.data).tag_name }}'
+          latestUrl: '${{ fromJson(steps.latest-release.outputs.data).html_url }}'
+          latestBody: '${{ fromJson(steps.latest-release.outputs.data).body }}'
         with:
           script: |
             const semver = require('semver')
             const fs = require('fs')
-            const currentVersion = '${{ steps.current-version.outputs.version }}'
-            const latestVersion = '${{ fromJson(steps.latest-release.outputs.data).tag_name }}'
-            console.log(`Current version: ${currentVersion}`)
-            console.log(`Latest version: ${latestVersion}`)
+            console.log(`Current version: ${process.env.currentVersion}`)
+            console.log(`Latest version: ${process.env.latestVersion}`)
             if (semver.gt(latestVersion, currentVersion)) {
               console.log('A new version is available, creating a PR...')
               await fs.writeFileSync("src/main/resources/SENTRY_CLI_VERSION", latestVersion)
@@ -54,15 +57,13 @@ jobs:
               await exec.exec(`git commit -m "Update Sentry CLI from ${currentVersion} to ${latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
               await exec.exec(`git push origin ${branchName}`)
 
-              const latestReleaseUrl = '${{ fromJson(steps.latest-release.outputs.data).html_url }}'
-              console.log(`Url to latest release: ${latestReleaseUrl}`)
-              const latestReleaseBody = `${{ fromJson(steps.latest-release.outputs.data).body }}`
-              console.log(`Body of latest release: ${latestReleaseBody}`)
+              console.log(`Url to latest release: ${process.env.latestReleaseUr}`)
+              console.log(`Body of latest release: ${process.env.latestReleaseBody}`)
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
-                body: `${latestReleaseUrl}`,
+                body: `${process.env.latestReleaseUrl}`,
                 head: branchName,
                 base: 'main'
               })
