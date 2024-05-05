@@ -54,13 +54,11 @@ jobs:
               await exec.exec(`git commit -m "Update Sentry CLI from ${currentVersion} to ${latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
               await exec.exec(`git push origin ${branchName}`)
 
-              #const releaseUrl = '${{ fromJson(steps.latest-release.outputs.data).html_url }}'
-              #const releaseBody = '${{ fromJson(steps.latest-release.outputs.data).body }}'
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
-                body: `Latest release`,
+                body: `Test body`,
                 head: branchName,
                 base: 'main'
               })
