@@ -61,7 +61,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
-                body: "Test body " + releaseUrl,
+                body: "Test body",
                 head: branchName,
                 base: 'main'
               })
