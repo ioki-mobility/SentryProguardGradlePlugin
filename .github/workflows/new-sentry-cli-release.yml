@@ -56,11 +56,13 @@ jobs:
 
               const latestReleaseUrl = '${{ fromJson(steps.latest-release.outputs.data).html_url }}'
               console.log(`Url to latest release: ${latestReleaseUrl}`)
+              const latestReleaseBody = '${{ fromJson(steps.latest-release.outputs.data).body }}'
+              console.log(`Body of latest release: ${latestReleaseBody}`)
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
-                body: `Test body`,
+                body: `${latestReleaseUrl}`,
                 head: branchName,
                 base: 'main'
               })
