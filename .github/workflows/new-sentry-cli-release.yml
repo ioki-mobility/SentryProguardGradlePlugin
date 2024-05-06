@@ -44,17 +44,17 @@ jobs:
             const semver = require('semver')
             const fs = require('fs')
             const currentVersion = process.env.currentVersion
-            const latestVersion = latestReleaseData.tag_name
+            const latestReleaseVersion = latestReleaseData.tag_name
             console.log(`Current version: ${currentVersion}`)
-            console.log(`Latest version: ${latestVersion}`)
-            if (semver.gt(latestVersion, currentVersion)) {
+            console.log(`Latest version: ${latestReleaseVersion}`)
+            if (semver.gt(latestReleaseVersion, currentVersion)) {
               console.log('A new version is available, creating a PR...')
               await fs.writeFileSync("src/main/resources/SENTRY_CLI_VERSION", process.env.latestVersion)
-              const branchName = `update-sentry-cli-from-${currentVersion}-to-${latestVersion}`
+              const branchName = `update-sentry-cli-from-${currentVersion}-to-${latestReleaseVersion}`
               await exec.exec("git config user.name 'github-actions[bot]'");
               await exec.exec("git config user.email 'github-actions[bot]@users.noreply.github.com'");
               await exec.exec(`git checkout -b ${branchName}`)
-              await exec.exec(`git commit -m "Update Sentry CLI from ${process.env.currentVersion} to ${process.env.latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
+              await exec.exec(`git commit -m "Update Sentry CLI from ${currentVersion} to ${latestReleaseVersion}" src/main/resources/SENTRY_CLI_VERSION`)
               await exec.exec(`git push origin ${branchName}`)
 
               const latestReleaseUrl = latestReleaseData.html_url
@@ -64,7 +64,7 @@ jobs:
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: `Update Sentry CLI from ${process.env.currentVersion} to ${process.env.latestVersion}`,
+                title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
                 body: `${latestReleaseUrl}\n\n${latestReleaseBody}`,
                 head: branchName,
                 base: 'main'
