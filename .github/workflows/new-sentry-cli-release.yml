@@ -51,7 +51,7 @@ jobs:
             console.log(`Latest version: ${latestReleaseVersion}`)
             if (semver.gt(latestReleaseVersion, currentVersion)) {
               console.log('A new version is available, creating a PR...')
-              await fs.writeFileSync("src/main/resources/SENTRY_CLI_VERSION", process.env.latestVersion)
+              await fs.writeFileSync("src/main/resources/SENTRY_CLI_VERSION", latestReleaseVersion)
               const branchName = `update-sentry-cli-from-${currentVersion}-to-${latestReleaseVersion}`
               await exec.exec("git config user.name 'github-actions[bot]'");
               await exec.exec("git config user.email 'github-actions[bot]@users.noreply.github.com'");
@@ -66,7 +66,7 @@ jobs:
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: `Update Sentry CLI from ${currentVersion} to ${latestVersion}`,
+                title: `Update Sentry CLI from ${currentVersion} to ${latestReleaseVersion}`,
                 body: `${latestReleaseUrl}\n\n${latestReleaseBody}`,
                 head: branchName,
                 base: 'main'
