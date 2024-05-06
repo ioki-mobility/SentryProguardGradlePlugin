@@ -38,32 +38,34 @@ jobs:
         uses: actions/github-script@v7
         env:
           currentVersion: '${{ steps.current-version.outputs.version }}'
-          latestVersion: '${{ fromJson(steps.latest-release.outputs.data).tag_name }}'
-          latestUrl: '${{ fromJson(steps.latest-release.outputs.data).html_url }}'
-          latestBody: '${{ fromJson(steps.latest-release.outputs.data).body }}'
+          latestReleaseData: '${{ fromJson(steps.latest-release.outputs.data) }}'
         with:
           script: |
             const semver = require('semver')
             const fs = require('fs')
-            console.log(`Current version: ${process.env.currentVersion}`)
-            console.log(`Latest version: ${process.env.latestVersion}`)
-            if (semver.gt(process.env.latestVersion, process.env.currentVersion)) {
+            const currentVersion = process.env.currentVersion
+            const latestVersion = latestReleaseData.tag_name
+            console.log(`Current version: ${currentVersion}`)
+            console.log(`Latest version: ${latestVersion}`)
+            if (semver.gt(latestVersion, currentVersion)) {
               console.log('A new version is available, creating a PR...')
               await fs.writeFileSync("src/main/resources/SENTRY_CLI_VERSION", process.env.latestVersion)
-              const branchName = `update-sentry-cli-from-${process.env.currentVersion}-to-${process.env.latestVersion}`
+              const branchName = `update-sentry-cli-from-${currentVersion}-to-${latestVersion}`
               await exec.exec("git config user.name 'github-actions[bot]'");
               await exec.exec("git config user.email 'github-actions[bot]@users.noreply.github.com'");
               await exec.exec(`git checkout -b ${branchName}`)
               await exec.exec(`git commit -m "Update Sentry CLI from ${process.env.currentVersion} to ${process.env.latestVersion}" src/main/resources/SENTRY_CLI_VERSION`)
               await exec.exec(`git push origin ${branchName}`)
 
-              console.log(`Url to latest release: ${process.env.latestUrl}`)
-              console.log(`Body of latest release: ${process.env.latestBody}`)
+              const latestReleaseUrl = latestReleaseData.html_url
+              console.log(`Url to latest release: ${latestReleaseUrl}`)
+              const latestReleaseBody = latestReleaseData.body
+              console.log(`Body of latest release: ${latestReleaseBody}`)
               await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `Update Sentry CLI from ${process.env.currentVersion} to ${process.env.latestVersion}`,
-                body: `${process.env.latestUrl}\n\n${process.env.latestBody}`,
+                body: `${latestReleaseUrl}\n\n${latestReleaseBody}`,
                 head: branchName,
                 base: 'main'
               })
