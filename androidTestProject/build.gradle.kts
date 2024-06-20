@@ -5,7 +5,7 @@ plugins {
 
 android {
     compileSdk = 33
-    namespace = "com.ioki.sentry.proguard.plugin"
+    namespace = "com.ioki.sentry.proguard.plugin.test.project"
 
     defaultConfig {
         applicationId = "com.ioki.sentry.proguard.plugin.test.project"
