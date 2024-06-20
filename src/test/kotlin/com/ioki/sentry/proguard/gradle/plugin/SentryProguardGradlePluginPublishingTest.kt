@@ -32,13 +32,13 @@ class SentryProguardGradlePluginPublishingTest {
 
     @Test
     fun `consuming of plugin marker publication via mavenLocal works`() {
-        val buildFile = testTmpPath.resolve("build.gradle")
+        val buildFile = testTmpPath.resolve("build.gradle.kts")
         val newBuildFile = buildFile.readText().replace(
             oldValue = """id "com.ioki.sentry.proguard"""",
             newValue = """id "com.ioki.sentry.proguard" version "2.3.0-SNAPSHOT""""
         )
         buildFile.writeText(newBuildFile)
-        val settingsFile = testTmpPath.resolve("settings.gradle")
+        val settingsFile = testTmpPath.resolve("settings.gradle.kts")
         val newSettingsFile = settingsFile.readText().replace(
             oldValue = "mavenCentral()",
             newValue = "mavenCentral() \n mavenLocal()"
