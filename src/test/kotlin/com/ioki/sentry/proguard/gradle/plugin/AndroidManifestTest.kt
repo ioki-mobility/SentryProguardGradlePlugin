@@ -73,7 +73,7 @@ class AndroidManifestTest {
     fun `on release build in an library without default android manifest should set to sentry metadata with uuid value to it`() {
         val sourceAndroidManifest = testTmpPath.resolve("src/main/AndroidManifest.xml")
         sourceAndroidManifest.deleteExisting()
-        testTmpPath.resolve("build.gradle").apply {
+        testTmpPath.resolve("build.gradle.kts").apply {
             var newBuildGradle = readText()
             newBuildGradle = newBuildGradle.replace(
                 oldValue = "id \"com.android.application\"",

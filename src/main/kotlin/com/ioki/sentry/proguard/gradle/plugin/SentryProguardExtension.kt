@@ -6,7 +6,7 @@ import org.gradle.api.provider.Property
 internal fun ExtensionContainer.createSentryProguardExtension(): SentryProguardExtension =
     create("sentryProguard", SentryProguardExtension::class.java)
 
-internal interface SentryProguardExtension {
+interface SentryProguardExtension {
     val organization: Property<String>
 
     val project: Property<String>
