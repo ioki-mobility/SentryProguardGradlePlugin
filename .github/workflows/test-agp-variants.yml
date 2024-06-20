@@ -17,7 +17,7 @@ jobs:
         # 3. The next after the current stable (alpha or beta doesn't matter)
         # The test cases needs to be updated regularly here
         # https://maven.google.com/web/index.html?q=gradle#com.android.tools.build:gradle
-        agp_version: [ '8.1.4', '8.2.2', '8.3.2', '8.4.0', '8.5.0-alpha08' ]
+        agp_version: [ '8.2.2', '8.3.2', '8.4.2', '8.5.0', '8.6.0-alpha06' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
