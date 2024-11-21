@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  checks: write
+
 jobs:
   localPluginTest:
     runs-on: ubuntu-latest
@@ -31,7 +34,7 @@ jobs:
         run: ./gradlew test --tests 'SentryProguardGradlePluginTest'
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@v5
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
@@ -64,7 +67,7 @@ jobs:
         run: ./gradlew test --tests 'SentryProguardGradlePluginPublishingTest'
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@v5
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
