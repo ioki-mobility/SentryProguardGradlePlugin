@@ -14,8 +14,10 @@ repositories {
 dependencies {
     implementation(libs.androidGradlePlugin)
 
-    testImplementation(libs.test.junit)
     testImplementation(libs.test.strikt)
+    testImplementation(platform(libs.test.junit.bom))
+    testImplementation(libs.test.junit)
+    testRuntimeOnly(libs.test.junit.launcher)
 }
 
 gradlePlugin {
