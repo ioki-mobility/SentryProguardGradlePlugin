@@ -1,6 +1,11 @@
+[versions]
+junit = "5.12.0"
+
 [libraries]
 androidGradlePlugin = "com.android.tools.build:gradle:8.9.0"
-test-junit = "org.junit.jupiter:junit-jupiter:5.11.4"
+test-junit-bom = { group="org.junit", name="junit-bom", version.ref ="junit" }
+test-junit = { group="org.junit.jupiter", name="junit-jupiter" }
+test-junit-launcher = { group="org.junit.platform", name="junit-platform-launcher" }
 test-strikt = "io.strikt:strikt-core:0.35.1"
 
 [plugins]
