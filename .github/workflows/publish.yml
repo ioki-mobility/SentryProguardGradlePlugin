@@ -22,4 +22,4 @@ jobs:
         run: ./gradlew publishAllPublicationsToGitHubPackagesRepository -PGPG_SIGNING_REQUIRED -PgithubPackages.user=$GITHUB_ACTOR -PgithubPackages.key=${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Sonatype Staging
-        run: ./gradlew publishAllPublicationsToSonatypeStagingRepository moveOssrhStagingToCentralPortal -PGPG_SIGNING_REQUIRED
+        run: ./gradlew publishAllPublicationsToCentralPortal -PGPG_SIGNING_REQUIRED
