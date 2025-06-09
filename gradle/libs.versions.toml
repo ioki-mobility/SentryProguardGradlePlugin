@@ -1,5 +1,5 @@
 [versions]
-junit = "5.13.0"
+junit = "5.13.1"
 
 [libraries]
 androidGradlePlugin = "com.android.tools.build:gradle:8.10.1"
