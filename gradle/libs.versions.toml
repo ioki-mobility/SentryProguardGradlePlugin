@@ -11,4 +11,4 @@ test-strikt = "io.strikt:strikt-core:0.35.1"
 [plugins]
 kotlin = "org.jetbrains.kotlin.jvm:2.2.0"
 dokka = "org.jetbrains.dokka:2.0.0"
-nmcp = "com.gradleup.nmcp:0.1.5"
+nmcp = "com.gradleup.nmcp:1.1.0"
