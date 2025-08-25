@@ -20,7 +20,7 @@ jobs:
         agp_version: [ '8.6.1', '8.7.3', '8.8.2', '8.9.0', '8.10.0-beta01' ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache Gradle
         uses: actions/cache@v4
