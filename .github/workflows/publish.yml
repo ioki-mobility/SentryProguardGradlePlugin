@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Publish to Github Packages
         run: ./gradlew publishAllPublicationsToGitHubPackagesRepository -PGPG_SIGNING_REQUIRED -PgithubPackages.user=$GITHUB_ACTOR -PgithubPackages.key=${{ secrets.GITHUB_TOKEN }}
