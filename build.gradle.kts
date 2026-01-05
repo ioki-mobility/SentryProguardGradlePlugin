@@ -41,7 +41,7 @@ val dokkaJar = tasks.register<Jar>("dokkaJar") {
     archiveClassifier.set("javadoc")
 }
 
-version = "2.5.0"
+version = "2.6.0-SNAPSHOT"
 group = "com.ioki.sentry.proguard"
 publishing {
     publications {
