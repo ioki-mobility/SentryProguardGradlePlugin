@@ -2,11 +2,16 @@ package com.ioki.sentry.proguard.gradle.plugin.tasks
 
 import com.ioki.sentry.proguard.gradle.plugin.SentryProguardExtension
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.process.ExecOperations
 import javax.inject.Inject
 
@@ -64,8 +69,8 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @get:Inject
     abstract val execOperations: ExecOperations
 
-    private val mappingFilePath: Provider<String> = variantName.map {
-        "${project.buildDir}/outputs/mapping/$it/mapping.txt"
+    private val mappingFilePath: Provider<RegularFile> = variantName.flatMap {
+        project.layout.buildDirectory.file("outputs/mapping/$it/mapping.txt")
     }
 
     @TaskAction
@@ -76,7 +81,7 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
             "upload-proguard",
             "--uuid",
             uuid.get(),
-            mappingFilePath.get(),
+            mappingFilePath.get().asFile.path,
             "--org",
             sentryOrg.get(),
             "--project",
