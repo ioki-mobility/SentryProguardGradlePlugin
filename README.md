@@ -24,8 +24,14 @@ sentryProguard {
     project.set("SENTRY_PROJECT")
     authToken.set("SENTRY_AUTH_TOKEN")
     noUpload.set(false)
+    cliConfig {
+        version.set("2.0.0")
+        command.set("${SentryCliConfig.PlaceHolder.CLI_FILE_PATH} some-command --org ${SentryCliConfig.PlaceHolder.ORG}")
+    }
 }
 ```
+
+**noUpload**:
 
 The `sentryProguard.noUpload` function is useful for development purposes.
 Normally, you don't want to upload the mapping file to Sentry while creating a minified version on developer machines.
@@ -42,6 +48,14 @@ sentryProguard {
 By default, you don't set the [Gradle property](https://docs.gradle.org/8.0.2/userguide/build_environment.html#sec:gradle_configuration_properties).
 In this case the plugin won't upload the mapping files.
 On your CI, however, you set the property and therefore the mapping file will be uploaded.
+
+**cliConfig**:
+
+This option is **not required** to be overridden or to be changed.
+By default, the plugin will download the version of the Sentry CLI bundled with the plugin and use it to upload the mapping file.
+However, if you want to use a custom version of the Sentry CLI and this would require to change the command to upload the mapping file, you can do so by overriding the `cliConfig` configuration.
+The `command` property can contain various placeholders like `${SentryCliConfig.PlaceHolder.CLI_FILE_PATH}` or `${SentryCliConfig.PlaceHolder.ORG}`.
+Those placeholders will be replaced by the plugin with the actual values before executing the command.
 
 ## How it works under the hood
 
