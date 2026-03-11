@@ -28,7 +28,6 @@ private fun Project.replaceSentryProguardUuidInAndroidManifest(
     extension: AndroidComponentsExtension<*, *, *>,
     sentryProguardExtension: SentryProguardExtension,
 ) {
-
     val downloadSentryCliTask = tasks.registerDownloadSentryCliTask(
         cliFilePath = layout.buildDirectory.file(SENTRY_CLI_FILE_PATH),
         cliVersion = sentryProguardExtension.cliConfig.version,
