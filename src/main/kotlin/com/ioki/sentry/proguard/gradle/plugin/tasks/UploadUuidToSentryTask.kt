@@ -1,6 +1,7 @@
 package com.ioki.sentry.proguard.gradle.plugin.tasks
 
 import com.ioki.sentry.proguard.gradle.plugin.SentryProguardExtension
+import com.ioki.sentry.proguard.gradle.plugin.build
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
@@ -35,6 +36,7 @@ internal fun TaskContainer.registerUploadUuidToSentryTask(
         it.cliFilePath.set(downloadSentryCliTask.flatMap { it.cliFilePath })
         it.uuid.set(uuid)
         it.variantName.set(variantName)
+        it.cliCommand.set(sentryProguardExtension.cliConfig.command)
     }
 
     configureEach { task ->
@@ -63,6 +65,9 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @get:Input
     abstract val sentryAuthToken: Property<String>
 
+    @get:Input
+    abstract val cliCommand: Property<String>
+
     @get:InputFile
     abstract val cliFilePath: RegularFileProperty
 
@@ -75,19 +80,13 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
 
     @TaskAction
     fun uploadUuidToSentry() {
-        val cliFilePath = cliFilePath.get().asFile.absolutePath
-        val command = listOf(
-            cliFilePath,
-            "upload-proguard",
-            "--uuid",
-            uuid.get(),
-            mappingFilePath.get().asFile.path,
-            "--org",
-            sentryOrg.get(),
-            "--project",
-            sentryProject.get(),
-            "--auth-token",
-            sentryAuthToken.get()
+        val command = cliCommand.get().build(
+            cliFilePath = cliFilePath.get().asFile.absolutePath,
+            uuid = uuid.get(),
+            mappingFilePath = mappingFilePath.get().asFile.absolutePath,
+            org = sentryOrg.get(),
+            project = sentryProject.get(),
+            authToken = sentryAuthToken.get()
         )
         logger.log(LogLevel.INFO, "Execute the following command:\n$command")
         execOperations.exec {

@@ -8,7 +8,7 @@ import com.ioki.sentry.proguard.gradle.plugin.tasks.registerDownloadSentryCliTas
 import com.ioki.sentry.proguard.gradle.plugin.tasks.registerUploadUuidToSentryTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.util.*
+import java.util.UUID
 
 private const val SENTRY_CLI_FILE_PATH = "sentry/cli"
 
@@ -16,6 +16,10 @@ class SentryProguardGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.getByType(AndroidComponentsExtension::class.java)
         val sentryProguardExtension = project.extensions.createSentryProguardExtension()
+        val bundledCliVersion = object {}.javaClass.getResource("/SENTRY_CLI_VERSION").readText()
+        sentryProguardExtension.cliConfig.version.convention(bundledCliVersion)
+        sentryProguardExtension.cliConfig.command.convention(SentryCliConfig.DEFAULT_COMMAND)
+
         project.replaceSentryProguardUuidInAndroidManifest(extension, sentryProguardExtension)
     }
 }
@@ -25,7 +29,8 @@ private fun Project.replaceSentryProguardUuidInAndroidManifest(
     sentryProguardExtension: SentryProguardExtension,
 ) {
     val downloadSentryCliTask = tasks.registerDownloadSentryCliTask(
-        layout.buildDirectory.file(SENTRY_CLI_FILE_PATH),
+        cliFilePath = layout.buildDirectory.file(SENTRY_CLI_FILE_PATH),
+        cliVersion = sentryProguardExtension.cliConfig.version,
     )
 
     extension.onVariants { variant ->

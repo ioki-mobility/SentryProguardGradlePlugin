@@ -31,7 +31,7 @@ jobs:
           java-version: '17'
 
       - name: Run 'normal' tests
-        run: ./gradlew test --tests 'SentryProguardGradlePluginTest'
+        run: ./gradlew test --tests 'SentryProguardGradlePluginTest' --tests '*.tasks.*'
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v6
