@@ -20,7 +20,8 @@ internal fun TaskContainer.registerUploadUuidToSentryTask(
     variantName: String,
     uuid: String,
     downloadSentryCliTask: TaskProvider<DownloadSentryCliTask>,
-    sentryProguardExtension: SentryProguardExtension
+    sentryProguardExtension: SentryProguardExtension,
+    mappingFile: Provider<RegularFile>
 ): TaskProvider<UploadUuidToSentryTask> {
     val uploadUuidTask = register(
         "uploadSentryProguardUuidFor${variantName.replaceFirstChar { it.titlecase() }}",
@@ -37,6 +38,7 @@ internal fun TaskContainer.registerUploadUuidToSentryTask(
         it.uuid.set(uuid)
         it.variantName.set(variantName)
         it.cliCommand.set(sentryProguardExtension.cliConfig.command)
+        it.mappingFile.set(mappingFile)
     }
 
     configureEach { task ->
@@ -74,16 +76,15 @@ internal abstract class UploadUuidToSentryTask : DefaultTask() {
     @get:Inject
     abstract val execOperations: ExecOperations
 
-    private val mappingFilePath: Provider<RegularFile> = variantName.flatMap {
-        project.layout.buildDirectory.file("outputs/mapping/$it/mapping.txt")
-    }
+    @get:InputFile
+    abstract val mappingFile: RegularFileProperty
 
     @TaskAction
     fun uploadUuidToSentry() {
         val command = cliCommand.get().build(
             cliFilePath = cliFilePath.get().asFile.absolutePath,
             uuid = uuid.get(),
-            mappingFilePath = mappingFilePath.get().asFile.absolutePath,
+            mappingFilePath = mappingFile.get().asFile.absolutePath,
             org = sentryOrg.get(),
             project = sentryProject.get(),
             authToken = sentryAuthToken.get()

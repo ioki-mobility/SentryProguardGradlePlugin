@@ -50,11 +50,14 @@ private fun Project.replaceSentryProguardUuidInAndroidManifest(
                 )
                 .toTransform(SingleArtifact.MERGED_MANIFEST)
 
+            val mappingFile = variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE)
+
             tasks.registerUploadUuidToSentryTask(
                 variantName = variant.name,
                 uuid = uuid,
                 downloadSentryCliTask = downloadSentryCliTask,
                 sentryProguardExtension = sentryProguardExtension,
+                mappingFile = mappingFile,
             )
         }
     }
